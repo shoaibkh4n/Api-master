@@ -56,16 +56,15 @@ function fixStepIndicator(n) {
 export function QuizLoad() {
   // useEffect(() => {
 
-  //   setTimeout(() => {
-      x = document.getElementsByClassName("tab");
-      prev = document.getElementById("prevBtn");
-      submit = document.getElementById("submitbtn");
-      next = document.getElementById("nextBtn");
-      form = document.getElementById("regForm");
-      refer(0);
+  setTimeout(() => {
+    x = document.getElementsByClassName("tab");
+    prev = document.getElementById("prevBtn");
+    submit = document.getElementById("submitbtn");
+    next = document.getElementById("nextBtn");
+    form = document.getElementById("regForm");
+    refer(0);
 
-      showTab(currentTab);
-  //   }, 2500)
+    showTab(currentTab);
+  }, 1000);
   // }, []);
 }
-

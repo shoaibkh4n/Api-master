@@ -6,8 +6,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const MCQ = () => {
-  const location = useLocation()
-  const { quizId, courseId, name } = location.state
+  const location = useLocation();
+  const { quizId, courseId, name } = location.state;
   const [profileData, setProfileData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mcqDatas, setMcqDatas] = useState([]);
@@ -18,52 +18,71 @@ const MCQ = () => {
 
   // },[loading])
   useEffect(() => {
-    setLoading(true)
-    axios.post("http://97.74.90.132:8082/profileData", {
-      "email": Cookies.get("email")
-    }, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      if (response.status === 200) {
-        setProfileData(response.data.Data)
-        setLoading(false)
-      }
-    })
-  }, [])
+    document.body.style.overflow = "visible";
+    setLoading(true);
+    axios
+      .post(
+        "http://97.74.90.132:8082/profileData",
+        {
+          email: Cookies.get("email"),
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setProfileData(response.data.Data);
+          setLoading(false);
+        }
+      });
+  }, []);
 
   useEffect(() => {
-    name === " Test" ?
-      axios.post("http://97.74.90.132:8082/df/mcq", {
-        "quizId": quizId
-      }, {
-        headers: {
-          "Acces-Control-Allow-Origin": "*",
-          "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ=="
-        }
-      }).then((response) => {
-        if (response.status === 200) {
-          setMcqDatas(response.data.Data)
-          QuizLoad();
-        }
-      }) :
-      axios.post("http://97.74.90.132:8082/df/getPracticeSetByCourseAndTopic", {
-        "quizId": quizId
-      }, {
-        headers: {
-          "Acces-Control-Allow-Origin": "*",
-          "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ=="
-        }
-      }).then((response) => {
-        if (response.status === 200) {
-          setMcqDatas(response.data.Data)
-          QuizLoad();
-        }
-      })
-  }, [])
+    name === "Test"
+      ? axios
+          .post(
+            "http://97.74.90.132:8082/df/mcq",
+            {
+              quizId: quizId,
+            },
+            {
+              headers: {
+                "Acces-Control-Allow-Origin": "*",
+                Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+              },
+            }
+          )
+          .then((response) => {
+            if (response.status === 200) {
+              setMcqDatas(response.data.Data);
+              QuizLoad();
+            }
+          })
+      : axios
+          .post(
+            "http://97.74.90.132:8082/df/getPracticeSetByCourseAndTopic",
+            {
+              quizId: quizId,
+            },
+            {
+              headers: {
+                "Acces-Control-Allow-Origin": "*",
+                Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+              },
+            }
+          )
+          .then((response) => {
+            if (response.status === 200) {
+              setMcqDatas(response.data.Data);
+              QuizLoad();
+            }
+          });
+  }, []);
   const navigate = useNavigate();
 
   const AnswerSet = (event) => {
@@ -71,46 +90,48 @@ const MCQ = () => {
       e1?.quesmasters.map((e2) => {
         e2?.optionBeans.map((el) => {
           if (event.target.value === el.optionValue) {
-            el.selected = 1
+            el.selected = 1;
+            return el;
+          } else {
+            el.selected = 0;
             return el;
           }
-          else {
-            el.selected = 0
-            return el;
-          }
-        })
+        });
         return e2;
-      }
-      )
+      });
       return e1;
-    }
-    );
+    });
     // console.log("res",res)
-    setlist(res)
-  }
+    setlist(res);
+  };
 
   const submitQuiz = (e) => {
-    axios.post("http://97.74.90.132:8082/df/saveMcqQuizData", {
-      "quizId": quizId,
-      "courseId": courseId,
-      "userId": Cookies.get("userId"),
-      "quizSectionWises":
-        list
-    }, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        // "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      if (response.status === 200) {
-        // setProfileData(response.data.Data)
-        console.log("data", response.data.Data)
-        navigate("/testsubmit", { state: { data: response.data.Data } });
+    axios
+      .post(
+        "http://97.74.90.132:8082/df/saveMcqQuizData",
+        {
+          quizId: quizId,
+          courseId: courseId,
+          userId: Cookies.get("userId"),
+          quizSectionWises: list,
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            // "Authorization": `${Cookies.get('token')}`
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          // setProfileData(response.data.Data)
+          console.log("data", response.data.Data);
+          navigate("/testsubmit", { state: { data: response.data.Data } });
 
-        setLoading(false)
-      }
-    })
+          setLoading(false);
+        }
+      });
     // console.log("submitted");
   };
 
@@ -221,9 +242,9 @@ const MCQ = () => {
       <br />
 
       <div style={{ textAlign: "center", marginTop: "40px" }}>
-        {mcqDatas.map(() =>
+        {mcqDatas.map(() => (
           <span className="step"></span>
-        )}
+        ))}
       </div>
 
       <form
@@ -234,15 +255,17 @@ const MCQ = () => {
         }}
       >
         {/* {console.log(mcqDatas)} */}
-        {mcqDatas.map((item) =>
+        {mcqDatas.map((item) => (
           <div className="tab">
             <div>
               <h2>{item.topicName}</h2>
-              {item.quesmasters.map((items, i) =>
+              {item.quesmasters.map((items, i) => (
                 <div>
-                  <label>Q{items.quesId}.&nbsp;&nbsp; &nbsp;{items.question}</label>
+                  <label>
+                    Q{items.quesId}.&nbsp;&nbsp; &nbsp;{items.question}
+                  </label>
                   <br />
-                  {items.optionBeans.map((answer, key) =>
+                  {items.optionBeans.map((answer, key) => (
                     <div className="form-check">
                       <input
                         type="radio"
@@ -252,16 +275,18 @@ const MCQ = () => {
                         value={answer.optionValue}
                         onChange={(e) => AnswerSet(e)}
                       />
-                      <label className="form-check-label">{answer.optionValue}</label>
+                      <label className="form-check-label">
+                        {answer.optionValue}
+                      </label>
                     </div>
-                  )}
+                  ))}
                 </div>
-              )}
+              ))}
               <br />
               <br />
             </div>
           </div>
-        )}
+        ))}
         <div style={{ overflow: "auto" }}>
           <div style={{ float: "right" }}>
             <button
@@ -304,6 +329,6 @@ const MCQ = () => {
       </footer>
     </>
   );
-}
+};
 
 export default MCQ;

@@ -5,25 +5,33 @@ import Cookies from "js-cookie";
 import axios from "axios";
 
 function TestSubmit() {
-  const { state } = useLocation()
-  const { data } = state
-  { console.log(data) }
-  const [profileData, setProfileData] = useState([])
+  const { state } = useLocation();
+  const { data } = state;
+  {
+    console.log(data);
+  }
+  const [profileData, setProfileData] = useState([]);
   useEffect(() => {
-    axios.post("http://97.74.90.132:8082/profileData", {
-      "email": Cookies.get("email")
-    }, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      if (response.status === 200) {
-        setProfileData(response.data.Data)
-      }
-    })
-  }, [])
+    axios
+      .post(
+        "http://97.74.90.132:8082/profileData",
+        {
+          email: Cookies.get("email"),
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setProfileData(response.data.Data);
+        }
+      });
+  }, []);
   return (
     <>
       <Header profileData={profileData} />
@@ -72,7 +80,11 @@ function TestSubmit() {
                 <Link className="btn main-btn float-end" to="/studentDashboard">
                   Dashboard
                 </Link>
-                <Link className="btn main-btn float-start" to="/reviewTest" state={{ quizId: data.quizResultId }}>
+                <Link
+                  className="btn main-btn float-start"
+                  to="/reviewTest"
+                  state={{ quizId: data.quizResultId }}
+                >
                   Review
                 </Link>
               </div>

@@ -13,12 +13,13 @@ import courses from "../../Assets/images/course.png";
 import teacher from "../../Assets/images/teachers.png";
 import mcq from "../../Assets/images/mcq.png";
 import { Link } from "react-router-dom";
-import {useNavigate } from 'react-router';
+import { useNavigate } from "react-router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Header from "../../Components/Header";
 
 function Landing() {
+  const history = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,100 +31,149 @@ function Landing() {
   const [statistics, setStatistics] = useState([]);
   const [studentSpeak, setStudentSpeak] = useState([]);
   const [profileData, setProfileData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [registerSuccess, setRegisterSuccess] = useState("");
 
   useEffect(() => {
-    axios.post("http://97.74.90.132:8082/df/statistics", {}, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ=="
-      }
-    }).then((response) => {
-      console.log("response", response.status)
-      if (response.status === 200) {
-        setStatistics(response.data.Data)
-      }
-    })
-  }, [])
+    axios
+      .post(
+        "http://97.74.90.132:8082/df/statistics",
+        {},
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+          },
+        }
+      )
+      .then((response) => {
+        console.log("response", response.status);
+        if (response.status === 200) {
+          setStatistics(response.data.Data);
+        }
+      });
+  }, []);
 
   useEffect(() => {
-    axios.post("http://97.74.90.132:8082/df/studentSpeak", {}, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ=="
-      }
-    }).then((response) => {
-      console.log("response", response.data.ResultCode)
-      if (response.status === 200) {
-        setStudentSpeak(response.data.Data)
-      }
-    })
-  }, [])
+    axios
+      .post(
+        "http://97.74.90.132:8082/df/studentSpeak",
+        {},
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+          },
+        }
+      )
+      .then((response) => {
+        console.log("response", response.data.ResultCode);
+        if (response.status === 200) {
+          setStudentSpeak(response.data.Data);
+        }
+      });
+  }, []);
 
   const onRegister = () => {
-    axios.post("http://97.74.90.132:8082/df/userRegDetails", {
-      "title": "Registration",
-      "firstName": firstName,
-      "lastName": lastName,
-      "email": email,
-      "password": password,
-      "number": mobile,
-      "whatsappNumber": whatsappNumber,
-      "course": course
-    }, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ=="
-      }
-    }).then((response) => {
-      if (response.data.ResultCode === 200) {
-        alert(response.data.ResultMessage);
-        document.getElementById("registerModal").classList.remove("show");
-        // window.location.reload()
-      }
-
-      else {
-        alert(response.data.ResultMessage)
-      }
-    })
-  }
-  useEffect(() => {
-    if (Cookies.get('token') !== null) {
-      axios.post("http://97.74.90.132:8082/profileData", {
-        "email": Cookies.get("email")
-      }, {
-        headers: {
-          "Acces-Control-Allow-Origin": "*",
-          "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-          "Authorization": `${Cookies.get('token')}`
+    setLoading(true);
+    axios
+      .post(
+        "http://97.74.90.132:8082/df/userRegDetails",
+        {
+          title: "Registration",
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+          number: mobile,
+          whatsappNumber: whatsappNumber,
+          course: course,
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+          },
         }
-      }).then((response) => {
-        if (response.status === 200) {
-          setProfileData(response.data.Data)
+      )
+      .then((response) => {
+        setLoading(false);
+        setRegisterSuccess("green");
+        if (response.data.ResultCode != 200) {
+          setRegisterSuccess("red");
+        } else {
+          setRegisterSuccess("green");
+        }
+        if (response.data.ResultCode === 200) {
+          alert(response.data.ResultMessage);
+
+          document.getElementById("registerModal").classList.remove("show");
+          // window.location.reload()
+        } else {
+          alert(response.data.ResultMessage);
         }
       })
+      .catch((e) => {
+        alert(e);
+        setLoading(false);
+      });
+  };
+  useEffect(() => {
+    if (Cookies.get("token") !== null) {
+      axios
+        .post(
+          "http://97.74.90.132:8082/profileData",
+          {
+            email: Cookies.get("email"),
+          },
+          {
+            headers: {
+              "Acces-Control-Allow-Origin": "*",
+              Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+              Authorization: `${Cookies.get("token")}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.status === 200) {
+            setProfileData(response.data.Data);
+          }
+        });
     }
-  }, [])
-  const history = useNavigate();  
-  const onLogin = () => {
-    axios.post("http://97.74.90.132:8082/wl/loginDtls", {
-      "username": email,
-      "password": password
-    }).then((response) => {
-      console.log(response.data.status)
-      console.log("response", response.data.result.userLoginResBean.email)
-      if (response.data.status === 200) {
-        Cookies.set("token", `Bearer ${response.data.result.token}`)
-        Cookies.set("email", response.data.result.userLoginResBean.email)
-        Cookies.set("userId", response.data.result.userLoginResBean.userId)
-        // alert(response.data.message);
-        history("/studentDashboard", { replace: true })
-      }
-    })
-  }
+  }, []);
+
+  const onLogin = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    axios
+      .post("http://97.74.90.132:8082/wl/loginDtls", {
+        username: email,
+        password: password,
+      })
+      .then((response) => {
+        console.log(response.status);
+        console.log(response.data.status);
+        console.log("response", response.data.result.userLoginResBean.email);
+        if (response.status == 200) {
+          Cookies.set("token", `Bearer ${response.data.result.token}`);
+          Cookies.set("email", response.data.result.userLoginResBean.email);
+          Cookies.set("userId", response.data.result.userLoginResBean.userId);
+          // alert(response.data.message);
+          setLoading(false);
+          history("/studentDashboard");
+        }
+      })
+      .catch((e) => {
+        alert(e);
+        setLoading(false);
+      });
+  };
 
   return (
     <>
-      {Cookies.get('token') ? <Header profileData={profileData} /> :
+      {Cookies.get("token") ? (
+        <Header profileData={profileData} />
+      ) : (
         <nav className="navbar navbar-expand-lg navbar-light px-5 py-1 fixed-top white-bg">
           <a className="navbar-brand" href="#">
             <img
@@ -190,13 +240,13 @@ function Landing() {
                   data-bs-target="#loginModal"
                   href="#"
                 >
-                  Login
+                  {loading ? "Please Wait.." : "Login"}
                 </a>
               </li>
             </ul>
           </div>
         </nav>
-      }
+      )}
       <div className="container">
         <br />
         <div className="row flex-lg-row-reverse align-items-center g-5 pt-5">
@@ -386,19 +436,15 @@ function Landing() {
           </div>
           {console.log("student", studentSpeak)}
           <div className="col-md-6">
-
             <div id="demo" className="carousel slide" data-bs-ride="carousel">
               <div className="carousel-inner">
                 {studentSpeak.map((item, i) => {
                   return (
-                    <div
-                      className='carousel-item active' key={i} >
+                    <div className="carousel-item active" key={i}>
                       <div className="card d-block card-write " key={item.id}>
                         <div className="card-body opct-dark">
                           <h5 className="card-title">{item.name}</h5>
-                          <p className="card-text">
-                            {item.textContent}
-                          </p>
+                          <p className="card-text">{item.textContent}</p>
                           <button
                             type="button"
                             className="btn border border-secondary "
@@ -409,9 +455,9 @@ function Landing() {
                           </button>
                         </div>
                       </div>
-                    </div>)
+                    </div>
+                  );
                 })}
-
               </div>
 
               <button
@@ -420,7 +466,7 @@ function Landing() {
                 data-bs-target="#demo"
                 data-bs-slide="prev"
               >
-                <span className="carousel-control-prev-icon" ></span>
+                <span className="carousel-control-prev-icon"></span>
               </button>
               <button
                 className="carousel-control-next main-color-bg"
@@ -431,7 +477,6 @@ function Landing() {
                 <span className="carousel-control-next-icon"></span>
               </button>
             </div>
-
           </div>
         </div>
       </section>
@@ -509,13 +554,20 @@ function Landing() {
             </div>
 
             <div className="col-md-4 col-sm-12 my-auto p-3 text-center">
-              <p>Phone : +91-1234567890</p>
+              <p>WhatsApp no: 9310054646</p>
               <br />
-              <p>Email : username@email.com</p>
+              <p>Email : info@besst.in</p>
               <br />
-              <p>Website : www.besst.in</p>
+              <p>
+                Website :{" "}
+                <a
+                  href="http://www.besst.in"
+                  style={{ color: "#7b1fa2", textDecoration: "underline" }}
+                >
+                  www.besst.in
+                </a>{" "}
+              </p>
               <br />
-              <p>Address : qwerty qwerty qwerty </p>
             </div>
             <div className="col-md-4 col-sm-12 main-color-bg">
               <h2 className="white text-center m-3">FAQ</h2>
@@ -525,11 +577,12 @@ function Landing() {
                   data-bs-toggle="collapse"
                   data-bs-target="#demo1"
                   className="text-decoration-none white"
+                  style={{ color: "#decaec" }}
                 >
-                  What is your name?
+                  Is there any free demo classes?
                 </a>
-                <div id="demo1" className="collapse">
-                  Answer no 1
+                <div id="demo1" className="collapse" style={{ color: "white" }}>
+                  Yes, there will be free practice papers.
                 </div>
               </div>
 
@@ -538,11 +591,12 @@ function Landing() {
                   data-bs-toggle="collapse"
                   data-bs-target="#demo2"
                   className="text-decoration-none white"
+                  style={{ color: "#decaec" }}
                 >
-                  What is your company's name?
+                  For which standard the courses are available?
                 </a>
-                <div id="demo2" className="collapse">
-                  Answer no 1
+                <div id="demo2" className="collapse" style={{ color: "white" }}>
+                  We provide guidance for CUET (UG) 2022.
                 </div>
               </div>
 
@@ -551,11 +605,40 @@ function Landing() {
                   data-bs-toggle="collapse"
                   data-bs-target="#demo3"
                   className="text-decoration-none white"
+                  style={{ color: "#decaec" }}
                 >
-                  Where are you from?
+                  Do I need to subscribe?
                 </a>
-                <div id="demo3" className="collapse">
-                  Answer no 1
+                <div id="demo3" className="collapse" style={{ color: "white" }}>
+                  Yes , you need to subscribe for it.
+                </div>
+              </div>
+              <div className="row p-4">
+                <a
+                  data-bs-toggle="collapse"
+                  data-bs-target="#demo4"
+                  className="text-decoration-none white"
+                  style={{ color: "#decaec" }}
+                >
+                  How can we contact and report an error, if found?
+                </a>
+                <div id="demo4" className="collapse" style={{ color: "white" }}>
+                  A student can contact to the team by the provided whatsapp
+                  number and also via email.
+                </div>
+              </div>
+              <div className="row p-4">
+                <a
+                  data-bs-toggle="collapse"
+                  data-bs-target="#demo5"
+                  className="text-decoration-none white"
+                  style={{ color: "#decaec" }}
+                >
+                  Is regional language available?
+                </a>
+                <div id="demo5" className="collapse" style={{ color: "white" }}>
+                  Yes, regional language paper like Bengali and Assamese are
+                  available.
                 </div>
               </div>
 
@@ -623,7 +706,7 @@ function Landing() {
               <iframe
                 width="420"
                 height="315"
-                src="https://www.youtube.com/embed/tgbNymZ7vqY"
+                src="httpss://www.youtube.com/embed/tgbNymZ7vqY"
               ></iframe>
             </div>
           </div>
@@ -690,7 +773,7 @@ function Landing() {
                   </a>
                 </div>
 
-                <div className="mb-3">
+                {/* <div className="mb-3">
                   <label id="success" className="form-label noti-success">
                     <i className="fa-solid fa-face-grin-stars"></i> Request Sent
                     Successfully
@@ -701,7 +784,7 @@ function Landing() {
                   <label id="error" className="form-label noti-error">
                     <i className="fa-solid fa-face-dizzy"></i> Error occured
                   </label>
-                </div>
+                </div> */}
                 <button
                   type="submit"
                   className="btn main-btn "
@@ -709,7 +792,7 @@ function Landing() {
                   onClick={onLogin}
                   // to="/studentDashboard"
                 >
-                  Login
+                  {loading ? "Please Wait.." : "Login"}
                 </button>
               </form>
             </div>
@@ -839,6 +922,9 @@ function Landing() {
                     type="checkbox"
                     value=""
                     id="flexCheckDefault"
+                    onChange={() => {
+                      setWhatsappNumber(mobile);
+                    }}
                   />
                   <label className="check-text">Same as Whatsapp Number</label>
                 </div>
@@ -855,6 +941,7 @@ function Landing() {
                     type="text"
                     className="form-control"
                     placeholder="Whatsapp Number"
+                    value={whatsappNumber}
                     onChange={(e) => setWhatsappNumber(e.target.value)}
                   />
                 </div>
@@ -868,25 +955,33 @@ function Landing() {
                     onChange={(e) => setCourse(e.target.value)}
                   >
                     <option selected>Select your course</option>
-                    <option value="1" >Commerce</option>
+                    <option value="1">Commerce</option>
                     <option value="2">Maths Science</option>
                     <option value="3">Biology</option>
                   </select>
                 </div>
-                <div className="mb-3">
-                  <label id="success" className="form-label noti-success">
-                    <i className="fa-solid fa-face-grin-stars"></i> Request Sent
-                    Successfully
-                  </label>
-                </div>
+                {registerSuccess == "green" ? (
+                  <div className="mb-3">
+                    <label id="success" className="form-label noti-success">
+                      <i className="fa-solid fa-face-grin-stars"></i> Request
+                      Sent Successfully
+                    </label>
+                  </div>
+                ) : null}
+                {registerSuccess == "red" ? (
+                  <div className="mb-3">
+                    <label id="error" className="form-label noti-error">
+                      <i className="fa-solid fa-face-dizzy"></i> Error occured
+                    </label>
+                  </div>
+                ) : null}
 
-                <div className="mb-3">
-                  <label id="error" className="form-label noti-error">
-                    <i className="fa-solid fa-face-dizzy"></i> Error occured
-                  </label>
-                </div>
-                <button type="button" className="btn main-btn " onClick={() => onRegister()}>
-                  Register
+                <button
+                  type="button"
+                  className="btn main-btn "
+                  onClick={() => onRegister()}
+                >
+                  {loading ? "Please wait..." : "Register"}
                 </button>
               </form>
             </div>
