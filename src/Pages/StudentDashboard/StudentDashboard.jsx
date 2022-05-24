@@ -9,7 +9,7 @@ function StudentDashboard() {
   const [profileData, setProfileData] = useState([]);
   const [videoData, setVideoData] = useState([]);
   const [testData, setTestData] = useState([]);
-
+  const [data,setData] = useState([]);
   useEffect(() => {
     document.body.style.overflow = "visible";
     const modal = document.querySelector(".modal-backdrop");
@@ -128,7 +128,7 @@ function StudentDashboard() {
       .post(
         "http://97.74.90.132:8082/df/downloadCourseMaterial",
         {
-          "courseId" : "1",
+          courseId: "1",
         },
         {
           headers: {
@@ -144,7 +144,7 @@ function StudentDashboard() {
           setTestData(response.data.Data);
         }
       });
-  }
+  };
 
   return (
     <>
@@ -287,7 +287,7 @@ function StudentDashboard() {
             >
               <div className="card glass-bg-red rounded text-center d-cards">
                 <i className="fa-solid fa-cloud-arrow-down display-5 light-red"></i>
-                <h5 className="mb-2 white mt-3 font-15" >Download Material</h5>
+                <h5 className="mb-2 white mt-3 font-15">Download Material</h5>
               </div>
             </a>
           </div>
@@ -334,16 +334,16 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData.map((item) => 
-              <div className="row mb-2">
-                <div className="col-md-9">{item.documentName}</div>
-                <div className="col-md-3">
-                  <a download href="" className="btn main-btn ">
-                    Download
-                  </a>
+              {testData.map((item) => (
+                <div className="row mb-2">
+                  <div className="col-md-9">{item.documentName}</div>
+                  <div className="col-md-3">
+                    <a download href="" className="btn main-btn ">
+                      Download
+                    </a>
+                  </div>
                 </div>
-              </div>
-              )}
+              ))}
               <hr />
             </div>
           </div>
@@ -418,30 +418,32 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {profileData.courseBeans ? profileData.courseBeans.map((item) => 
-                <div>
-                  <div className="col-md-9">{item.courseName}</div>
-                  <br />
-                  {item.topicBeans.map((items) => 
-                    <div className="row mb-2">
-                      <div className="col-md-9">{items.topicName}</div>
-                      <div className="col-md-3">
-                        <Link
-                          to="/viewTest"
-                          state={{
-                            courseId: item.courseId,
-                            topicId: items.topicId,
-                            name: "Test",
-                          }}
-                          className="btn main-btn"
-                        >
-                          View
-                        </Link>
-                      </div>
+              {profileData.courseBeans
+                ? profileData.courseBeans.map((item) => (
+                    <div>
+                      <div className="col-md-9">{item.courseName}</div>
+                      <br />
+                      {item.topicBeans.map((items) => (
+                        <div className="row mb-2">
+                          <div className="col-md-9">{items.topicName}</div>
+                          <div className="col-md-3">
+                            <Link
+                              to="/viewTest"
+                              state={{
+                                courseId: item.courseId,
+                                topicId: items.topicId,
+                                name: "Test",
+                              }}
+                              className="btn main-btn"
+                            >
+                              View
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-              ) : "" }
+                  ))
+                : ""}
             </div>
           </div>
         </div>
@@ -468,30 +470,32 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-            {profileData.courseBeans ? profileData.courseBeans.map((item) => 
-                <div>
-                  <div className="col-md-9">{item.courseName}</div>
-                  <br />
-                  {item.topicBeans.map((items) => 
-                    <div className="row mb-2">
-                      <div className="col-md-9">{items.topicName}</div>
-                      <div className="col-md-3">
-                        <Link
-                          to="/viewTest"
-                          state={{
-                            courseId: item.courseId,
-                            topicId: items.topicId,
-                            name: "Test",
-                          }}
-                          className="btn main-btn"
-                        >
-                          Resume
-                        </Link>
-                      </div>
+              {profileData.courseBeans
+                ? profileData.courseBeans.map((item) => (
+                    <div>
+                      <div className="col-md-9">{item.courseName}</div>
+                      <br />
+                      {item.topicBeans.map((items) => (
+                        <div className="row mb-2">
+                          <div className="col-md-9">{items.topicName}</div>
+                          <div className="col-md-3">
+                            <Link
+                              to="/viewTest"
+                              state={{
+                                courseId: item.courseId,
+                                topicId: items.topicId,
+                                name: "Test",
+                              }}
+                              className="btn main-btn"
+                            >
+                              Resume
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-              ) : "" }
+                  ))
+                : ""}
             </div>
           </div>
         </div>
@@ -594,17 +598,18 @@ function StudentDashboard() {
             </div>
             <div className="modal-body p-5 mx-auto">
               <label className="p-2">Course Name:</label>
-              <select
-                className="form-select"
-                aria-label="Default select example"
-              >
-                <option value="1" selected>
-                  X th Board
-                </option>
-                <option value="2">XII th Board</option>
-              </select>
-
+              {profileData.courseBeans.map((item) => (
+                <select
+                  className="form-select"
+                  aria-label="Default select example"
+                  onChange={() => setData(item)}
+                >
+                  <option selected>Select Course</option>
+                  <option value={item.courseName}>{item.courseName}</option>
+                </select>
+              ))}
               <br />
+              {/* {Data ? Data. */}
               <label className="p-2">Available Subjects:</label>
               <div className="form-check">
                 <input

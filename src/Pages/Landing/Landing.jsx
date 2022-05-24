@@ -81,14 +81,14 @@ function Landing() {
       .post(
         "http://97.74.90.132:8082/df/userRegDetails",
         {
-          title: "Registration",
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password,
-          number: mobile,
-          whatsappNumber: whatsappNumber,
-          course: course,
+          "title": "Registration",
+          "firstName": firstName,
+          "lastName": lastName,
+          "email": email,
+          "password": password,
+          "number": mobile,
+          "whatsappNumber": whatsappNumber,
+          "course": JSON.parse(course),
         },
         {
           headers: {
@@ -991,7 +991,7 @@ function Landing() {
                     <option selected>Select your course</option>
                     {console.log("item",courseDetails)}
                     {courseDetails.map((item) => 
-                    <option value={item.courseName}>{item.courseName}</option>
+                    <option value={item.courseId}>{item.courseName}</option>
                     )}
                   </select>
                 </div>
