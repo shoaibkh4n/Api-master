@@ -74,30 +74,30 @@ function StudentDashboard() {
       });
   }, []);
 
-  const TestAvailable = () => {
-    axios
-      .post(
-        "http://97.74.90.132:8082/df/getCoursesByCandidate",
-        {
-          email: Cookies.get("email"),
-          userId: Cookies.get("userId"),
-        },
-        {
-          headers: {
-            "Acces-Control-Allow-Origin": "*",
-            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-            Authorization: `${Cookies.get("token")}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log("response", response.status);
-        if (response.status === 200) {
-          console.log("videoData", response.data.Data);
-          setTestData(response.data.Data);
-        }
-      });
-  };
+  // const TestAvailable = () => {
+  //   axios
+  //     .post(
+  //       "http://97.74.90.132:8082/df/getCoursesByCandidate",
+  //       {
+  //         email: Cookies.get("email"),
+  //         userId: Cookies.get("userId"),
+  //       },
+  //       {
+  //         headers: {
+  //           "Acces-Control-Allow-Origin": "*",
+  //           Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+  //           Authorization: `${Cookies.get("token")}`,
+  //         },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       console.log("response", response.status);
+  //       if (response.status === 200) {
+  //         console.log("videoData", response.data.Data);
+  //         setTestData(response.data.Data);
+  //       }
+  //     });
+  // };
 
   const TestTaken = () => {
     axios
@@ -122,6 +122,29 @@ function StudentDashboard() {
         }
       });
   };
+
+  const onDownload = () => {
+    axios
+      .post(
+        "http://97.74.90.132:8082/df/downloadCourseMaterial",
+        {
+          "courseId" : "1",
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+          },
+        }
+      )
+      .then((response) => {
+        console.log("response", response.status);
+        if (response.status === 200) {
+          console.log("videoData", response.data.Data);
+          setTestData(response.data.Data);
+        }
+      });
+  }
 
   return (
     <>
@@ -207,7 +230,7 @@ function StudentDashboard() {
               type="button"
               data-bs-toggle="modal"
               data-bs-target="#availableModal"
-              onClick={() => TestAvailable()}
+              // onClick={() => TestAvailable()}
             >
               <div className="card glass-bg-green rounded text-center d-cards">
                 <i className="fa-solid fa-list-check light-green display-5"></i>
@@ -229,7 +252,7 @@ function StudentDashboard() {
                 <i className="fa-solid fa-circle-pause display-5 light-blue"></i>
                 <h5
                   className="mb-2 white mt-3 font-15"
-                  onClick={() => TestAvailable()}
+                  // onClick={() => TestAvailable()}
                 >
                   Practise Test
                 </h5>
@@ -260,10 +283,11 @@ function StudentDashboard() {
               type="button"
               data-bs-toggle="modal"
               data-bs-target="#downloadModal"
+              onClick={() => onDownload()}
             >
               <div className="card glass-bg-red rounded text-center d-cards">
                 <i className="fa-solid fa-cloud-arrow-down display-5 light-red"></i>
-                <h5 className="mb-2 white mt-3 font-15">Download Material</h5>
+                <h5 className="mb-2 white mt-3 font-15" >Download Material</h5>
               </div>
             </a>
           </div>
@@ -310,25 +334,17 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
+              {testData.map((item) => 
               <div className="row mb-2">
-                <div className="col-md-9">Maths (Trigonometry)</div>
+                <div className="col-md-9">{item.documentName}</div>
                 <div className="col-md-3">
                   <a download href="" className="btn main-btn ">
                     Download
                   </a>
                 </div>
               </div>
-
+              )}
               <hr />
-
-              <div className="row mb-2">
-                <div className="col-md-9">Science (Physics)</div>
-                <div className="col-md-3">
-                  <a download href="" className="btn main-btn ">
-                    Download
-                  </a>
-                </div>
-              </div>
             </div>
           </div>
         </div>
