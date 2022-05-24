@@ -4,6 +4,7 @@ import Header from "../../Components/Header";
 import Cookies from "js-cookie";
 import axios from "axios";
 import moment from "moment";
+import baseUrl from "../../Components/baseUrl";
 
 function StudentDashboard() {
   const [profileData, setProfileData] = useState([]);
@@ -28,7 +29,7 @@ function StudentDashboard() {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/profileData",
+        baseUrl() + "/profileData",
         {
           email: Cookies.get("email"),
         },
@@ -53,7 +54,7 @@ function StudentDashboard() {
     }
     axios
       .post(
-        "http://97.74.90.132:8082/df/fetchVideoClassesDtls",
+        baseUrl() + "/df/fetchVideoClassesDtls",
         {
           username: Cookies.get("email"),
         },
@@ -77,7 +78,7 @@ function StudentDashboard() {
   // const TestAvailable = () => {
   //   axios
   //     .post(
-  //       "http://97.74.90.132:8082/df/getCoursesByCandidate",
+  //       baseUrl() + "/df/getCoursesByCandidate",
   //       {
   //         email: Cookies.get("email"),
   //         userId: Cookies.get("userId"),
@@ -102,7 +103,7 @@ function StudentDashboard() {
   const TestTaken = () => {
     axios
       .post(
-        "http://97.74.90.132:8082/getAllSubmittedQuizByUserId",
+        baseUrl() + "/getAllSubmittedQuizByUserId",
         {
           userId: Cookies.get("userId"),
         },
@@ -126,9 +127,9 @@ function StudentDashboard() {
   const onDownload = () => {
     axios
       .post(
-        "http://97.74.90.132:8082/df/downloadCourseMaterial",
+        baseUrl() + "/df/downloadCourseMaterial",
         {
-          "courseId" : "1",
+          courseId: "1",
         },
         {
           headers: {
@@ -144,7 +145,7 @@ function StudentDashboard() {
           setTestData(response.data.Data);
         }
       });
-  }
+  };
 
   return (
     <>
@@ -287,7 +288,7 @@ function StudentDashboard() {
             >
               <div className="card glass-bg-red rounded text-center d-cards">
                 <i className="fa-solid fa-cloud-arrow-down display-5 light-red"></i>
-                <h5 className="mb-2 white mt-3 font-15" >Download Material</h5>
+                <h5 className="mb-2 white mt-3 font-15">Download Material</h5>
               </div>
             </a>
           </div>
@@ -334,16 +335,16 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData.map((item) => 
-              <div className="row mb-2">
-                <div className="col-md-9">{item.documentName}</div>
-                <div className="col-md-3">
-                  <a download href="" className="btn main-btn ">
-                    Download
-                  </a>
+              {testData.map((item) => (
+                <div className="row mb-2">
+                  <div className="col-md-9">{item.documentName}</div>
+                  <div className="col-md-3">
+                    <a download href="" className="btn main-btn ">
+                      Download
+                    </a>
+                  </div>
                 </div>
-              </div>
-              )}
+              ))}
               <hr />
             </div>
           </div>
@@ -418,30 +419,32 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {profileData.courseBeans ? profileData.courseBeans.map((item) => 
-                <div>
-                  <div className="col-md-9">{item.courseName}</div>
-                  <br />
-                  {item.topicBeans.map((items) => 
-                    <div className="row mb-2">
-                      <div className="col-md-9">{items.topicName}</div>
-                      <div className="col-md-3">
-                        <Link
-                          to="/viewTest"
-                          state={{
-                            courseId: item.courseId,
-                            topicId: items.topicId,
-                            name: "Test",
-                          }}
-                          className="btn main-btn"
-                        >
-                          View
-                        </Link>
-                      </div>
+              {profileData.courseBeans
+                ? profileData.courseBeans.map((item) => (
+                    <div>
+                      <div className="col-md-9">{item.courseName}</div>
+                      <br />
+                      {item.topicBeans.map((items) => (
+                        <div className="row mb-2">
+                          <div className="col-md-9">{items.topicName}</div>
+                          <div className="col-md-3">
+                            <Link
+                              to="/viewTest"
+                              state={{
+                                courseId: item.courseId,
+                                topicId: items.topicId,
+                                name: "Test",
+                              }}
+                              className="btn main-btn"
+                            >
+                              View
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-              ) : "" }
+                  ))
+                : ""}
             </div>
           </div>
         </div>
@@ -468,30 +471,32 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-            {profileData.courseBeans ? profileData.courseBeans.map((item) => 
-                <div>
-                  <div className="col-md-9">{item.courseName}</div>
-                  <br />
-                  {item.topicBeans.map((items) => 
-                    <div className="row mb-2">
-                      <div className="col-md-9">{items.topicName}</div>
-                      <div className="col-md-3">
-                        <Link
-                          to="/viewTest"
-                          state={{
-                            courseId: item.courseId,
-                            topicId: items.topicId,
-                            name: "Test",
-                          }}
-                          className="btn main-btn"
-                        >
-                          Resume
-                        </Link>
-                      </div>
+              {profileData.courseBeans
+                ? profileData.courseBeans.map((item) => (
+                    <div>
+                      <div className="col-md-9">{item.courseName}</div>
+                      <br />
+                      {item.topicBeans.map((items) => (
+                        <div className="row mb-2">
+                          <div className="col-md-9">{items.topicName}</div>
+                          <div className="col-md-3">
+                            <Link
+                              to="/viewTest"
+                              state={{
+                                courseId: item.courseId,
+                                topicId: items.topicId,
+                                name: "Test",
+                              }}
+                              className="btn main-btn"
+                            >
+                              Resume
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-              ) : "" }
+                  ))
+                : ""}
             </div>
           </div>
         </div>

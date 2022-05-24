@@ -17,6 +17,7 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Header from "../../Components/Header";
+import baseUrl from "../../Components/baseUrl";
 
 function Landing() {
   const history = useNavigate();
@@ -38,7 +39,7 @@ function Landing() {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/df/statistics",
+        `${baseUrl()}/df/statistics`,
         {},
         {
           headers: {
@@ -58,7 +59,7 @@ function Landing() {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/df/studentSpeak",
+        baseUrl() + "/df/studentSpeak",
         {},
         {
           headers: {
@@ -79,7 +80,7 @@ function Landing() {
     setLoading(true);
     axios
       .post(
-        "http://97.74.90.132:8082/df/userRegDetails",
+        `${baseUrl()}/df/userRegDetails`,
         {
           title: "Registration",
           firstName: firstName,
@@ -124,8 +125,9 @@ function Landing() {
     setLoading(true);
     axios
       .post(
-        "http://97.74.90.132:8082/df/coursesAndTopics/",{
-          "courseId" : "1"
+        baseUrl() + "/df/coursesAndTopics/",
+        {
+          courseId: "1",
         },
         {
           headers: {
@@ -137,8 +139,8 @@ function Landing() {
       .then((response) => {
         setLoading(false);
         if (response.status === 200) {
-          console.log("items",response.data)
-          setCourseDetails(response.data.Data)
+          console.log("items", response.data);
+          setCourseDetails(response.data.Data);
           // window.location.reload()
         } else {
           setCourseDetails([]);
@@ -153,7 +155,7 @@ function Landing() {
     if (Cookies.get("token") !== null) {
       axios
         .post(
-          "http://97.74.90.132:8082/profileData",
+          baseUrl() + "/profileData",
           {
             email: Cookies.get("email"),
           },
@@ -177,7 +179,7 @@ function Landing() {
     e.preventDefault();
     setLoading(true);
     axios
-      .post("http://97.74.90.132:8082/wl/loginDtls", {
+      .post(baseUrl() + "/wl/loginDtls", {
         username: email,
         password: password,
       })
@@ -989,10 +991,10 @@ function Landing() {
                     onChange={(e) => setCourse(e.target.value)}
                   >
                     <option selected>Select your course</option>
-                    {console.log("item",courseDetails)}
-                    {courseDetails.map((item) => 
-                    <option value={item.courseName}>{item.courseName}</option>
-                    )}
+                    {/* {console.log("item", courseDetails)} */}
+                    {courseDetails.map((item) => (
+                      <option value={item.courseId}>{item.courseName}</option>
+                    ))}
                   </select>
                 </div>
                 {registerSuccess == "green" ? (

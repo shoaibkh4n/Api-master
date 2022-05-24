@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header";
 import Cookies from "js-cookie";
+import baseUrl from "../../Components/baseUrl";
 
 function Profile() {
   const [profileData, setProfileData] = useState([]);
@@ -14,7 +15,7 @@ function Profile() {
     document.body.style.overflow = "visible";
     axios
       .post(
-        "http://97.74.90.132:8082/profileData",
+        baseUrl() + "/profileData",
         {
           email: Cookies.get("email"),
         },
@@ -37,7 +38,7 @@ function Profile() {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/df/coursesAndTopics",
+        baseUrl() + "/df/coursesAndTopics",
         {
           courseId: "1",
         },
@@ -121,16 +122,14 @@ function Profile() {
   const checkedResponse = (items) => {
     // console.log(items)
     let app = 0;
-  profileData.courseBeans.map((e1) => {
+    profileData.courseBeans.map((e1) => {
       e1.topicBeans.map((e2) => {
-        if (items === e2.topicName) 
-         app++;
+        if (items === e2.topicName) app++;
       });
     });
-   console.log(app)
-   if(app === 1)
-     return true
-   else return false
+    console.log(app);
+    if (app === 1) return true;
+    else return false;
   };
   return (
     <>

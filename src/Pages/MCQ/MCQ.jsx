@@ -4,6 +4,7 @@ import { nextPrev, refer, QuizLoad } from "../../Components/quizWorking";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
+import baseUrl from "../../Components/baseUrl";
 
 const MCQ = () => {
   const location = useLocation();
@@ -22,7 +23,7 @@ const MCQ = () => {
     setLoading(true);
     axios
       .post(
-        "http://97.74.90.132:8082/profileData",
+        baseUrl() + "/profileData",
         {
           email: Cookies.get("email"),
         },
@@ -46,7 +47,7 @@ const MCQ = () => {
     name === "Test"
       ? axios
           .post(
-            "http://97.74.90.132:8082/df/mcq",
+            baseUrl() + "/df/mcq",
             {
               quizId: quizId,
             },
@@ -65,7 +66,7 @@ const MCQ = () => {
           })
       : axios
           .post(
-            "http://97.74.90.132:8082/df/getPracticeSetByCourseAndTopic",
+            baseUrl() + "/df/getPracticeSetByCourseAndTopic",
             {
               quizId: quizId,
             },
@@ -108,7 +109,7 @@ const MCQ = () => {
   const submitQuiz = (e) => {
     axios
       .post(
-        "http://97.74.90.132:8082/df/saveMcqQuizData",
+        baseUrl() + "/df/saveMcqQuizData",
         {
           quizId: quizId,
           courseId: courseId,
