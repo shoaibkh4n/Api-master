@@ -210,7 +210,9 @@ function ReviewTest() {
                           value={answer.optionValue}
                           checked={answer.selected === 0 ? false : true}
                         />
-
+ 
+                        <div>{answer.optionValue}
+                        &nbsp;
                         <label className="form-check-label">
                           {answer.isCorrect === 1 && (
                             <i
@@ -219,7 +221,7 @@ function ReviewTest() {
                             ></i>
                           )}
                         </label>
-                        {}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -291,7 +293,7 @@ function ReviewTest() {
                     className="collapse"
                     id={`collapseExample/${items.quesId}`}
                   >
-                    <div className="card card-body">{items.title}</div>
+                    <div className="card card-body">{items.title !== null ? items.title : "No Explanation"}</div>
                   </div>
 
                   <br />

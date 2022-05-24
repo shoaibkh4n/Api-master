@@ -117,6 +117,21 @@ function Profile() {
       );
     }
   };
+
+  const checkedResponse = (items) => {
+    // console.log(items)
+    let app = 0;
+  profileData.courseBeans.map((e1) => {
+      e1.topicBeans.map((e2) => {
+        if (items === e2.topicName) 
+         app++;
+      });
+    });
+   console.log(app)
+   if(app === 1)
+     return true
+   else return false
+  };
   return (
     <>
       <Header profileData={name} />
@@ -133,7 +148,7 @@ function Profile() {
                   id="output"
                   height="130px"
                   width="auto"
-                  src={profileData.image}
+                  src={`http://97.74.90.132:8082/${profileData.image}`}
                 />
               </p>
             </div>
@@ -166,10 +181,10 @@ function Profile() {
               >
                 Applied Subjects
               </li>
-              <li className="list-group-item">Maths</li>
-              <li className="list-group-item">Physics</li>
-              <li className="list-group-item">Chemistry</li>
-              <li className="list-group-item">Biology</li>
+              {profileData.courseBeans &&
+                profileData.courseBeans.map((item) => (
+                  <li className="list-group-item">{item.courseName}</li>
+                ))}
             </ul>
           </div>
           <div className="col-4 p-3">
@@ -279,39 +294,24 @@ function Profile() {
             </select>
             <br />
             <label className="p-2">Available Subjects:</label>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                value=""
-                id="hindiCB"
-              />
-              <label className="form-check-label">Hindi</label>
-              <br />
-              <input
-                className="form-check-input"
-                type="checkbox"
-                value=""
-                id="englishCB"
-              />
-              <label className="form-check-label">English</label>
-              <br />
-              <input
-                className="form-check-input"
-                type="checkbox"
-                value=""
-                id="mathsCB"
-              />
-              <label className="form-check-label">Maths</label>
-              <br />
-              <input
-                className="form-check-input"
-                type="checkbox"
-                value=""
-                id="scienceCB"
-              />
-              <label className="form-check-label">Science</label>
-            </div>
+            {subjects.map((items) => (
+              <div className="form-check">
+                <label className="form-check-label">{items.courseName}</label>
+                {items.topicBeans.map((item) => (
+                  <div>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value=""
+                      id="hindiCB"
+                      checked={checkedResponse(item.topicName)}
+                    />
+                    <label className="form-check-label">{item.topicName}</label>
+                  </div>
+                ))}
+                <br />
+              </div>
+            ))}
             <button
               className="btn main-btn float-end "
               onClick={() => onSubmit()}

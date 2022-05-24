@@ -47,19 +47,19 @@ function FAQ() {
         <div className="row mt-5 p-5 faq-row">
           <h2 className="text-center">FAQ</h2>
           <div className="col-md-12 pt-4 pb-4">
-            <h4 className="main-color">Is there any free demo classNamees?</h4>
-            <p>Yes, there will be free practice papers. </p>
+            <h4 className="main-color">1. Is there any free demo classes? </h4>
+            <p>Yes, there will be free practice papers.</p>
 
             <h4 className="main-color mt-5">
-              For which standard the courses are available?{" "}
+             2. For which standard the courses are available?{" "}
             </h4>
             <p>We provide guidance for CUET (UG) 2022. </p>
 
-            <h4 className="main-color">Do I need to subscribe? </h4>
+            <h4 className="main-color">3. Do I need to subscribe? </h4>
             <p>Yes , you need to subscribe for it. </p>
 
             <h4 className="main-color mt-5">
-              How can we contact and report an error, if found?{" "}
+             4. How can we contact and report an error, if found?{" "}
             </h4>
             <p>
               BA student can contact to the team by the provided whatsapp number
@@ -67,7 +67,7 @@ function FAQ() {
             </p>
 
             <h4 className="main-color mt-5">
-              Is regional language available?{" "}
+             5. Is regional language available?{" "}
             </h4>
             <p>
               Yes, regional language paper like Bengali and Assamese are

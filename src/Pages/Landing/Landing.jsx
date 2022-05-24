@@ -30,6 +30,7 @@ function Landing() {
   const [course, setCourse] = useState("");
   const [statistics, setStatistics] = useState([]);
   const [studentSpeak, setStudentSpeak] = useState([]);
+  const [courseDetails, setCourseDetails] = useState([]);
   const [profileData, setProfileData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState("");
@@ -115,6 +116,36 @@ function Landing() {
       })
       .catch((e) => {
         alert(e);
+        setLoading(false);
+      });
+  };
+
+  const onRegisterClick = () => {
+    setLoading(true);
+    axios
+      .post(
+        "http://97.74.90.132:8082/df/coursesAndTopics/",{
+          "courseId" : "1"
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+          },
+        }
+      )
+      .then((response) => {
+        setLoading(false);
+        if (response.status === 200) {
+          console.log("items",response.data)
+          setCourseDetails(response.data.Data)
+          // window.location.reload()
+        } else {
+          setCourseDetails([]);
+        }
+      })
+      .catch((e) => {
+        setCourseDetails([]);
         setLoading(false);
       });
   };
@@ -278,6 +309,7 @@ function Landing() {
                 className="btn main-btn  px-4 me-md-2"
                 data-bs-toggle="modal"
                 data-bs-target="#registerModal"
+                onClick={() => onRegisterClick()}
               >
                 Register
               </button>
@@ -317,10 +349,12 @@ function Landing() {
           <div className="col-md-6 col-sm-12 pt-5">
             <h3 className="main-color">What is BESST?</h3>
             <h5>
-              BESST is a state board aspirants exclusive platform to connect
-              with experienced teachers across the state who are capable of
-              guiding, nurturing and giving feedback to help them enhance their
-              Secondary, higher secondary and CUET scores.{" "}
+              BESST (BRAHMAPUTRA EXAM SUCCESS SUPPORT TEAM) It is an educational
+              / online platform consisting of experienced teachers all over the
+              country for helping students to have hands on online test starting
+              with CUET(UG) 2022.It will provide mock test/ practice test and
+              live classes. This platform will help students to excel in
+              competitive exams.
             </h5>
 
             <h3 className="main-color mt-5">How does BESST help students?</h3>
@@ -955,9 +989,10 @@ function Landing() {
                     onChange={(e) => setCourse(e.target.value)}
                   >
                     <option selected>Select your course</option>
-                    <option value="1">Commerce</option>
-                    <option value="2">Maths Science</option>
-                    <option value="3">Biology</option>
+                    {console.log("item",courseDetails)}
+                    {courseDetails.map((item) => 
+                    <option value={item.courseName}>{item.courseName}</option>
+                    )}
                   </select>
                 </div>
                 {registerSuccess == "green" ? (
