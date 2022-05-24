@@ -275,7 +275,7 @@ const MCQ = () => {
                   <label>
                     Q{items.quesId}.&nbsp;&nbsp; &nbsp;
                     <span
-                      dangerouslySetInnerHTML={{ _html: items.question }}
+                      dangerouslySetInnerHTML={{ __html: items.question }}
                     ></span>
                   </label>
                   <br />
