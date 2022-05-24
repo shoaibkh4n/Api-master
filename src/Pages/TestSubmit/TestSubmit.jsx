@@ -3,6 +3,7 @@ import Header from "../../Components/Header";
 import { Link, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
+import baseUrl from "../../Components/baseUrl";
 
 function TestSubmit() {
   const { state } = useLocation();
@@ -14,7 +15,7 @@ function TestSubmit() {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/profileData",
+        baseUrl() + "/profileData",
         {
           email: Cookies.get("email"),
         },

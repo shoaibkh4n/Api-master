@@ -4,12 +4,14 @@ import Header from "../../Components/Header";
 import Cookies from "js-cookie";
 import axios from "axios";
 import moment from "moment";
+import baseUrl from "../../Components/baseUrl";
 
 function StudentDashboard() {
   const [profileData, setProfileData] = useState([]);
   const [videoData, setVideoData] = useState([]);
   const [testData, setTestData] = useState([]);
-  const [data,setData] = useState([]);
+  const [data, setData] = useState([]);
+
   useEffect(() => {
     document.body.style.overflow = "visible";
     const modal = document.querySelector(".modal-backdrop");
@@ -28,7 +30,7 @@ function StudentDashboard() {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/profileData",
+        `http://97.74.90.132:8082/profileData`,
         {
           email: Cookies.get("email"),
         },
@@ -53,7 +55,7 @@ function StudentDashboard() {
     }
     axios
       .post(
-        "http://97.74.90.132:8082/df/fetchVideoClassesDtls",
+        baseUrl() + "/df/fetchVideoClassesDtls",
         {
           username: Cookies.get("email"),
         },
@@ -77,7 +79,7 @@ function StudentDashboard() {
   // const TestAvailable = () => {
   //   axios
   //     .post(
-  //       "http://97.74.90.132:8082/df/getCoursesByCandidate",
+  //       baseUrl() + "/df/getCoursesByCandidate",
   //       {
   //         email: Cookies.get("email"),
   //         userId: Cookies.get("userId"),
@@ -102,7 +104,7 @@ function StudentDashboard() {
   const TestTaken = () => {
     axios
       .post(
-        "http://97.74.90.132:8082/getAllSubmittedQuizByUserId",
+        baseUrl() + "/getAllSubmittedQuizByUserId",
         {
           userId: Cookies.get("userId"),
         },
@@ -126,7 +128,7 @@ function StudentDashboard() {
   const onDownload = () => {
     axios
       .post(
-        "http://97.74.90.132:8082/df/downloadCourseMaterial",
+        baseUrl() + "/df/downloadCourseMaterial",
         {
           courseId: "1",
         },
@@ -146,8 +148,10 @@ function StudentDashboard() {
       });
   };
 
-  return (
+  return profileData && videoData ? (
     <>
+      {console.log(profileData)}
+
       <Header profileData={profileData} />
 
       <div className="container border  rounded">
@@ -160,9 +164,11 @@ function StudentDashboard() {
         <div className="row">
           <div className="col-md-6 col-sm-12 p-3 border-end text-center">
             <h3 className="fw-bold">
-              {profileData.firstName + " " + profileData.lastName}{" "}
+              {profileData
+                ? profileData.firstName + " " + profileData.lastName
+                : ""}{" "}
             </h3>
-            <h5>{profileData.qualification}</h5>
+            <h5>{profileData ? profileData.qualification : ""}</h5>
             <p>Profile 30% completed</p>
             <br />
             <Link className="btn main-btn" to="/studentprofile">
@@ -334,16 +340,18 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData.map((item) => (
-                <div className="row mb-2">
-                  <div className="col-md-9">{item.documentName}</div>
-                  <div className="col-md-3">
-                    <a download href="" className="btn main-btn ">
-                      Download
-                    </a>
-                  </div>
-                </div>
-              ))}
+              {testData
+                ? testData.map((item) => (
+                    <div className="row mb-2">
+                      <div className="col-md-9">{item.documentName}</div>
+                      <div className="col-md-3">
+                        <a download href="" className="btn main-btn ">
+                          Download
+                        </a>
+                      </div>
+                    </div>
+                  ))
+                : ""}
               <hr />
             </div>
           </div>
@@ -371,27 +379,29 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData.map((item) => (
-                <div className="row mb-2">
-                  <div className="col-md-9">
-                    <h5>{item.quizTitle}</h5>
-                    <label>{item.timeTaken}</label>{" "}
-                    <label>&nbsp; &nbsp; &nbsp;</label>{" "}
-                    <label>
-                      {moment(item.submittedDate).format("DD-MM-YYYY")}
-                    </label>
-                  </div>
-                  <div className="col-md-3">
-                    <Link
-                      className="btn main-btn "
-                      to="/reviewTest"
-                      state={{ quizId: item.quizResultId }}
-                    >
-                      Review
-                    </Link>
-                  </div>
-                </div>
-              ))}
+              {testData
+                ? testData.map((item) => (
+                    <div className="row mb-2">
+                      <div className="col-md-9">
+                        <h5>{item.quizTitle}</h5>
+                        <label>{item.timeTaken}</label>{" "}
+                        <label>&nbsp; &nbsp; &nbsp;</label>{" "}
+                        <label>
+                          {moment(item.submittedDate).format("DD-MM-YYYY")}
+                        </label>
+                      </div>
+                      <div className="col-md-3">
+                        <Link
+                          className="btn main-btn "
+                          to="/reviewTest"
+                          state={{ quizId: item.quizResultId }}
+                        >
+                          Review
+                        </Link>
+                      </div>
+                    </div>
+                  ))
+                : ""}
             </div>
           </div>
         </div>
@@ -602,7 +612,7 @@ function StudentDashboard() {
                 <select
                   className="form-select"
                   aria-label="Default select example"
-                  onChange={() => setData(item)}
+                  // onChange={() => setData(item)}
                 >
                   <option selected>Select Course</option>
                   <option value={item.courseName}>{item.courseName}</option>
@@ -687,6 +697,8 @@ function StudentDashboard() {
         </div>
       </footer>
     </>
+  ) : (
+    " "
   );
 }
 

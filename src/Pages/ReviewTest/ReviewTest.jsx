@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import useRemoveModal from "../../Components/useRemoveModal";
+import baseUrl from "../../Components/baseUrl";
 
 function ReviewTest() {
   const location = useLocation();
@@ -28,7 +29,7 @@ function ReviewTest() {
     document.body.style.overflow = "visible";
     axios
       .post(
-        "http://97.74.90.132:8082/profileData",
+        baseUrl() + "/profileData",
         {
           email: Cookies.get("email"),
         },
@@ -49,7 +50,7 @@ function ReviewTest() {
   const previewApi = () => {
     axios
       .post(
-        "http://97.74.90.132:8082/PreviewQuiz",
+        baseUrl() + "/PreviewQuiz",
         {
           userId: Cookies.get("userId"),
           quizResultId: quizId,
@@ -210,17 +211,18 @@ function ReviewTest() {
                           value={answer.optionValue}
                           checked={answer.selected === 0 ? false : true}
                         />
- 
-                        <div>{answer.optionValue}
-                        &nbsp;
-                        <label className="form-check-label">
-                          {answer.isCorrect === 1 && (
-                            <i
-                              class="fa fa-check-circle"
-                              style={{ color: "green" }}
-                            ></i>
-                          )}
-                        </label>
+
+                        <div>
+                          {answer.optionValue}
+                          &nbsp;
+                          <label className="form-check-label">
+                            {answer.isCorrect === 1 && (
+                              <i
+                                class="fa fa-check-circle"
+                                style={{ color: "green" }}
+                              ></i>
+                            )}
+                          </label>
                         </div>
                       </div>
                     </div>
@@ -293,7 +295,9 @@ function ReviewTest() {
                     className="collapse"
                     id={`collapseExample/${items.quesId}`}
                   >
-                    <div className="card card-body">{items.title !== null ? items.title : "No Explanation"}</div>
+                    <div className="card card-body">
+                      {items.title !== null ? items.title : "No Explanation"}
+                    </div>
                   </div>
 
                   <br />
