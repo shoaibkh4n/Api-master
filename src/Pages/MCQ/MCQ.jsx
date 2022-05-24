@@ -274,8 +274,9 @@ const MCQ = () => {
                 <div>
                   <label>
                     Q{items.quesId}.&nbsp;&nbsp; &nbsp;
-                    {/* stringToHTML(items.question) */}
-                    {stringToHTML(items.question)}
+                    <span
+                      dangerouslySetInnerHTML={{ _html: items.question }}
+                    ></span>
                   </label>
                   <br />
                   {items.optionBeans.map((answer, key) => (
