@@ -6,43 +6,55 @@ import Cookies from "js-cookie";
 import axios from "axios";
 
 const ViewTest = (props) => {
-  const location = useLocation()
-  const { courseId, topicId,name } = location.state
-  console.log("CourseId", courseId, topicId)
-  const [profileData, setProfileData] = useState([])
-  const [testData, setTestData] = useState([])
+  const location = useLocation();
+  const { courseId, topicId, name } = location.state;
+  console.log("CourseId", courseId, topicId);
+  const [profileData, setProfileData] = useState([]);
+  const [testData, setTestData] = useState([]);
 
   useEffect(() => {
-    axios.post("http://97.74.90.132:8082/profileData", {
-      "email": Cookies.get("email")
-    }, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      if (response.status === 200) {
-        setProfileData(response.data.Data)
-      }
-    })
-  }, [])
+    axios
+      .post(
+        "http://97.74.90.132:8082/profileData",
+        {
+          email: Cookies.get("email"),
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setProfileData(response.data.Data);
+        }
+      });
+  }, []);
   useEffect(() => {
-    axios.post("http://97.74.90.132:8082/df/getAllActiveQuizByCourseAndTopic", {
-      "courseId": courseId,
-      "topicId": topicId
-    }, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-      }
-    }).then((response) => {
-      if (response.status === 200) {
-        setTestData(response.data.Data)
-        console.log("testData", testData)
-      }
-    }) 
-  }, [])
+    axios
+      .post(
+        "http://97.74.90.132:8082/df/getAllActiveQuizByCourseAndTopic",
+        {
+          courseId: courseId,
+          topicId: topicId,
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setTestData(response.data.Data);
+          console.log("testData", testData);
+        }
+      });
+  }, []);
   useRemoveModal();
   return (
     <>
@@ -52,7 +64,7 @@ const ViewTest = (props) => {
         <br />
         <br />
         <br />
-        {testData.map((item) =>
+        {testData.map((item) => (
           <div className="row mt-5 p-5 faq-row">
             <h2 className="text-center">{item.title}</h2>
             <div className="col-md-12 pt-4 pb-4">
@@ -73,7 +85,16 @@ const ViewTest = (props) => {
                 </div>
 
                 <div className="col-md-2 my-auto">
-                  <Link type="button" to="/studentMCQ" state={{ quizId: item.quizId,courseId: courseId,name: name}} className="btn main-btn">
+                  <Link
+                    type="button"
+                    to="/studentMCQ"
+                    state={{
+                      quizId: item.quizId,
+                      courseId: courseId,
+                      name: name,
+                    }}
+                    className="btn main-btn"
+                  >
                     Start Test
                   </Link>
                 </div>
@@ -82,8 +103,7 @@ const ViewTest = (props) => {
               <hr />
             </div>
           </div>
-        )}
-
+        ))}
       </div>
 
       <br />
@@ -96,6 +116,6 @@ const ViewTest = (props) => {
       </footer>
     </>
   );
-}
+};
 
 export default ViewTest;

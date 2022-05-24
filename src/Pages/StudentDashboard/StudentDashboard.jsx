@@ -6,11 +6,12 @@ import axios from "axios";
 import moment from "moment";
 
 function StudentDashboard() {
-  const [profileData,setProfileData] = useState([])
-  const [videoData,setVideoData] = useState([])
-  const [testData,setTestData] = useState([])
+  const [profileData, setProfileData] = useState([]);
+  const [videoData, setVideoData] = useState([]);
+  const [testData, setTestData] = useState([]);
 
   useEffect(() => {
+    document.body.style.overflow = "visible";
     const modal = document.querySelector(".modal-backdrop");
     const courseModalbtn = document.querySelector(".courseModalbtn");
     const modalCourseSelect = document.querySelector(".modalCourseSelect");
@@ -25,82 +26,106 @@ function StudentDashboard() {
   }, []);
 
   useEffect(() => {
-    axios.post("http://97.74.90.132:8082/profileData",{
-      "email" : Cookies.get("email")
-    },{
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      console.log("response",response.status)
-      if(response.status === 200) {
-        setProfileData(response.data.Data)
-      } 
-    })
-  },[])
+    axios
+      .post(
+        "http://97.74.90.132:8082/profileData",
+        {
+          email: Cookies.get("email"),
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("response", response.status);
+        if (response.status === 200) {
+          setProfileData(response.data.Data);
+        }
+      });
+  }, []);
   useEffect(() => {
-    if(!Cookies.get("token")) {
-    window.location.reload();
+    if (!Cookies.get("token")) {
+      window.location.reload();
     }
-    axios.post("http://97.74.90.132:8082/df/fetchVideoClassesDtls",{
-      "username" : Cookies.get("email")
-    },{
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      console.log("response",response.status)
-      if(response.status === 200) {
-        console.log("videoData",response.data.Data)
-        setVideoData(response.data.Data)
-      } 
-    })
-  },[])
+    axios
+      .post(
+        "http://97.74.90.132:8082/df/fetchVideoClassesDtls",
+        {
+          username: Cookies.get("email"),
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("response", response.status);
+        if (response.status === 200) {
+          console.log("videoData", response.data.Data);
+          setVideoData(response.data.Data);
+        }
+      });
+  }, []);
 
-  const TestAvailable  = () => {
-    axios.post("http://97.74.90.132:8082/df/getCoursesByCandidate",{
-      "email" : Cookies.get("email"),
-      "userId":  Cookies.get("userId")
-    },{
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      console.log("response",response.status)
-      if(response.status === 200) {
-        console.log("videoData",response.data.Data)
-        setTestData(response.data.Data)
-      } 
-    })
-  }
+  const TestAvailable = () => {
+    axios
+      .post(
+        "http://97.74.90.132:8082/df/getCoursesByCandidate",
+        {
+          email: Cookies.get("email"),
+          userId: Cookies.get("userId"),
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("response", response.status);
+        if (response.status === 200) {
+          console.log("videoData", response.data.Data);
+          setTestData(response.data.Data);
+        }
+      });
+  };
 
   const TestTaken = () => {
-    axios.post("http://97.74.90.132:8082/getAllSubmittedQuizByUserId",{
-      "userId":  Cookies.get("userId")
-    },{
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      console.log("response",response.status)
-      if(response.status === 200) {
-        console.log("videoData",response.data.Data)
-        setTestData(response.data.Data)
-      } 
-    })
-  }
+    axios
+      .post(
+        "http://97.74.90.132:8082/getAllSubmittedQuizByUserId",
+        {
+          userId: Cookies.get("userId"),
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("response", response.status);
+        if (response.status === 200) {
+          console.log("videoData", response.data.Data);
+          setTestData(response.data.Data);
+        }
+      });
+  };
 
   return (
     <>
-      <Header profileData={profileData}/>
+      <Header profileData={profileData} />
 
       <div className="container border  rounded">
         <br />
@@ -111,7 +136,9 @@ function StudentDashboard() {
         <br />
         <div className="row">
           <div className="col-md-6 col-sm-12 p-3 border-end text-center">
-            <h3 className="fw-bold">{profileData.firstName + " " + profileData.lastName} </h3>
+            <h3 className="fw-bold">
+              {profileData.firstName + " " + profileData.lastName}{" "}
+            </h3>
             <h5>{profileData.qualification}</h5>
             <p>Profile 30% completed</p>
             <br />
@@ -126,20 +153,25 @@ function StudentDashboard() {
               <hr />
             </div>
             <br />
-            {videoData.map((item) => 
-            <div className="row">
-              <div className="col-md-9 col-sm-9">
-                <h5 className="fw-bold">{item.meetingDate}</h5>
-                <h5>{item.meetingDesc}</h5>
-                {/* <p>Ram Sir (IIT Delhi)</p> */}
+            {videoData.map((item) => (
+              <div className="row">
+                <div className="col-md-9 col-sm-9">
+                  <h5 className="fw-bold">{item.meetingDate}</h5>
+                  <h5>{item.meetingDesc}</h5>
+                  {/* <p>Ram Sir (IIT Delhi)</p> */}
+                </div>
+                <div className="col-md-3 col-sm-3 my-auto mx-auto p-2">
+                  <a
+                    target="_blank"
+                    className="btn main-btn "
+                    href={item.meetingUrl}
+                  >
+                    <i class="fas fa-users" style={{ fontSize: "12px" }}></i>
+                    &nbsp; Join
+                  </a>
+                </div>
               </div>
-              <div className="col-md-3 col-sm-3 my-auto mx-auto p-2">
-                <button className="btn main-btn">
-                  <a className="fa-solid fa-users-line" href={item.meetingTime}></a> &nbsp; Join
-                </button>
-              </div>
-            </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
@@ -163,7 +195,7 @@ function StudentDashboard() {
               <div className="card glass-bg rounded text-center d-cards">
                 <i className="fa-solid fa-circle-check main-color display-5"></i>
                 <h5 className="mb-2 white mt-3 font-15">Tests Taken</h5>
-                <h3 className="white fw-bolder">100</h3>
+                {/* <h3 className="white fw-bolder">100</h3> */}
               </div>
             </a>
           </div>
@@ -180,7 +212,7 @@ function StudentDashboard() {
               <div className="card glass-bg-green rounded text-center d-cards">
                 <i className="fa-solid fa-list-check light-green display-5"></i>
                 <h5 className="mb-2 white mt-3 font-15 ">Tests Available</h5>
-                <h3 className="white fw-bolder">100</h3>
+                {/* <h3 className="white fw-bolder">100</h3> */}
               </div>
             </a>
           </div>
@@ -195,8 +227,13 @@ function StudentDashboard() {
             >
               <div className="card glass-bg-blue rounded text-center d-cards">
                 <i className="fa-solid fa-circle-pause display-5 light-blue"></i>
-                <h5 className="mb-2 white mt-3 font-15" onClick={() => TestAvailable()}>Practise Test</h5>
-                <h3 className="white fw-bolder">100</h3>
+                <h5
+                  className="mb-2 white mt-3 font-15"
+                  onClick={() => TestAvailable()}
+                >
+                  Practise Test
+                </h5>
+                {/* <h3 className="white fw-bolder">100</h3> */}
               </div>
             </a>
           </div>
@@ -212,7 +249,7 @@ function StudentDashboard() {
               <div className="card glass-bg-cherry rounded text-center d-cards">
                 <i className="fa-solid fa-users-rectangle display-5 light-cherry"></i>
                 <h5 className="mb-2 white mt-3 font-15 ">Classes Attended</h5>
-                <h3 className="white fw-bolder">100</h3>
+                {/* <h3 className="white fw-bolder">100</h3> */}
               </div>
             </a>
           </div>
@@ -318,20 +355,27 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData.map((item) => 
-              <div className="row mb-2">
-                <div className="col-md-9">
-                  <h5>{item.quizTitle}</h5>
-                  <label>{item.timeTaken}</label> <label>&nbsp; &nbsp; &nbsp;</label>{" "}
-                  <label>{moment(item.submittedDate).format("DD-MM-YYYY")}</label>
+              {testData.map((item) => (
+                <div className="row mb-2">
+                  <div className="col-md-9">
+                    <h5>{item.quizTitle}</h5>
+                    <label>{item.timeTaken}</label>{" "}
+                    <label>&nbsp; &nbsp; &nbsp;</label>{" "}
+                    <label>
+                      {moment(item.submittedDate).format("DD-MM-YYYY")}
+                    </label>
+                  </div>
+                  <div className="col-md-3">
+                    <Link
+                      className="btn main-btn "
+                      to="/reviewTest"
+                      state={{ quizId: item.quizResultId }}
+                    >
+                      Review
+                    </Link>
+                  </div>
                 </div>
-                <div className="col-md-3">
-                  <Link className="btn main-btn " to="/reviewTest" state={{ quizId: item.quizResultId }}>
-                    Review
-                  </Link>
-                </div>
-              </div>
-              )}
+              ))}
             </div>
           </div>
         </div>
@@ -358,16 +402,24 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData.map((item) => 
-              <div className="row mb-2">
-                <div className="col-md-9">{item.userName}</div>
-                <div className="col-md-3">
-                  <Link to="/viewTest" state={{ courseId: item.courseId,topicId: item.topicId,name: "Test"}} className="btn main-btn">
-                    View
-                  </Link>
+              {testData.map((item) => (
+                <div className="row mb-2">
+                  <div className="col-md-9">{item.userName}</div>
+                  <div className="col-md-3">
+                    <Link
+                      to="/viewTest"
+                      state={{
+                        courseId: item.courseId,
+                        topicId: item.topicId,
+                        name: "Test",
+                      }}
+                      className="btn main-btn"
+                    >
+                      View
+                    </Link>
+                  </div>
                 </div>
-              </div>
-              )}
+              ))}
             </div>
           </div>
         </div>
@@ -394,14 +446,24 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-            {testData.map((item) => 
-              <div className="row mb-2">
-                <div className="col-md-9">{item.userName}</div>
-                <div className="col-md-3">
-                  <Link to="/viewTest" className="btn main-btn " state={{ courseId: item.courseId,topicId: item.topicId,name: "Practise" }}>Resume</Link >
+              {testData.map((item) => (
+                <div className="row mb-2">
+                  <div className="col-md-9">{item.userName}</div>
+                  <div className="col-md-3">
+                    <Link
+                      to="/viewTest"
+                      className="btn main-btn "
+                      state={{
+                        courseId: item.courseId,
+                        topicId: item.topicId,
+                        name: "Practise",
+                      }}
+                    >
+                      Resume
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
             </div>
           </div>
         </div>

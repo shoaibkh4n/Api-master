@@ -4,17 +4,17 @@ import { nextPrev, refer, QuizLoad } from "../../Components/quizWorking";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import useRemoveModal from "../../Components/useRemoveModal";
 
 function ReviewTest() {
-  const location = useLocation()
-  const { quizId } = location.state
-  const [profileData, setProfileData] = useState([])
-  const [quizResult, setQuizResult] = useState([])
+  const location = useLocation();
+  const { quizId } = location.state;
+  const [profileData, setProfileData] = useState([]);
+  const [quizResult, setQuizResult] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [answerView, setAnswerView] = useState("")
-  const [explanation, setExplanation] = useState("")
-
-
+  const [answerView, setAnswerView] = useState("");
+  const [explanation, setExplanation] = useState("");
+  useRemoveModal();
   useEffect(() => {
     profileDataApi();
     previewApi();
@@ -22,45 +22,59 @@ function ReviewTest() {
     //   profileData([]);
     //   quizResult([]);
     // }
-  }, [])
+  }, []);
 
   const profileDataApi = () => {
-    axios.post("http://97.74.90.132:8082/profileData", {
-      "email": Cookies.get("email")
-    }, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      if (response.status === 200) {
-        setProfileData(response.data.Data)
-      }
-    })
-  }
+    document.body.style.overflow = "visible";
+    axios
+      .post(
+        "http://97.74.90.132:8082/profileData",
+        {
+          email: Cookies.get("email"),
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setProfileData(response.data.Data);
+        }
+      });
+  };
   const previewApi = () => {
-    axios.post("http://97.74.90.132:8082/PreviewQuiz", {
-      "userId": Cookies.get("userId"),
-      "quizResultId": quizId
-    }, {
-      headers: {
-        "Acces-Control-Allow-Origin": "*",
-        "Client_ID": "MVOZ7rblFHsvdzk25vsQpQ==",
-        "Authorization": `${Cookies.get('token')}`
-      }
-    }).then((response) => {
-      if (response.status === 200) {
-        setQuizResult(response.data.Data)
-        QuizLoad();
-      }
-    })
-  }
-  const checkedStatus = (option) => {
+    axios
+      .post(
+        "http://97.74.90.132:8082/PreviewQuiz",
+        {
+          userId: Cookies.get("userId"),
+          quizResultId: quizId,
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setQuizResult(response.data.Data);
 
+          QuizLoad();
+          console.log(quizResult);
+        }
+      });
+  };
+  const checkedStatus = (option) => {
     if (option.selected === 1) return true;
-    else return false
-  }
+    else return false;
+  };
   return (
     <>
       {/* {console.log("quizResult", quizResult)} */}
@@ -170,20 +184,22 @@ function ReviewTest() {
       <br />
       <br />
       <div style={{ textAlign: "center", marginTop: "40px" }}>
-        {quizResult.map(() =>
+        {quizResult.map(() => (
           <span className="step"></span>
-        )}
+        ))}
       </div>
       <form id="regForm">
-        {quizResult.map((item) =>
+        {quizResult.map((item) => (
           <div className="tab">
             <div>
               {/* <h2>{item.}</h2> */}
-              {item.questionsBeans.map((items) =>
+              {item.questionsBeans.map((items) => (
                 <div>
-                  <label>Q{items.quesId}&nbsp;&nbsp; &nbsp;{items.question}</label>
+                  <label>
+                    Q{items.quesId}&nbsp;&nbsp; &nbsp;{items.question}
+                  </label>
                   <br />
-                  {items.optionBeans.map((answer) =>
+                  {items.optionBeans.map((answer) => (
                     <div>
                       <div className="form-check">
                         <input
@@ -192,19 +208,26 @@ function ReviewTest() {
                           id="check1"
                           name={answer.quesId}
                           value={answer.optionValue}
-                          checked={checkedStatus(answer)}
+                          checked={answer.selected === 0 ? false : true}
                         />
 
-                        <label className="form-check-label">{answer.optionValue}</label>
-
+                        <label className="form-check-label">
+                          {answer.isCorrect === 1 && (
+                            <i
+                              class="fa fa-check-circle"
+                              style={{ color: "green" }}
+                            ></i>
+                          )}
+                        </label>
+                        {}
                       </div>
-
                     </div>
-                  )}
+                  ))}
                   {/* <br /> */}
                   <a className="p-3">
                     {" "}
-                    <i className="fa fa-thumbs-up" aria-hidden="true"></i> &nbsp;10
+                    <i className="fa fa-thumbs-up" aria-hidden="true"></i>{" "}
+                    &nbsp;10
                   </a>
                   <a className="p-3">
                     {" "}
@@ -221,13 +244,14 @@ function ReviewTest() {
                   <br />
                   <br />
                   <p>
-
-                    <a className="p-2" data-toggle="collapse"
+                    <a
+                      className="p-2"
+                      data-toggle="collapse"
                       href={`#collapseAnswer/${items.quesId}`}
                       role="button"
                       aria-expanded="false"
                       aria-controls={`collapseAnswer/${items.quesId}`}
-                    // onClick={() => AnswerCheck()}
+                      // onClick={() => AnswerCheck()}
                     >
                       Answer
                     </a>
@@ -252,29 +276,30 @@ function ReviewTest() {
                     <a className="p-2" href="">
                       Help
                     </a>
-
                   </p>
-                  <div className="collapse" id={`#collapseAnswer/${items.quesId}`}>
+                  <div
+                    className="collapse"
+                    id={`#collapseAnswer/${items.quesId}`}
+                  >
                     <div className="card card-body">
                       {items.optionBeans.map((item) => {
-                        if (item.isCorrect === 1)
-                          return item.optionValue
+                        if (item.isCorrect === 1) return item.optionValue;
                       })}
                     </div>
                   </div>
-                  <div className="collapse" id={`collapseExample/${items.quesId}`}>
-                    <div className="card card-body">
-                      {items.title}
-                    </div>
+                  <div
+                    className="collapse"
+                    id={`collapseExample/${items.quesId}`}
+                  >
+                    <div className="card card-body">{items.title}</div>
                   </div>
 
                   <br />
                 </div>
-
-              )}
+              ))}
             </div>
           </div>
-        )}
+        ))}
 
         <div style={{ overflow: "auto" }}>
           <div style={{ float: "right" }}>
@@ -297,7 +322,6 @@ function ReviewTest() {
           </div>
         </div>
       </form>
-
 
       <br />
       <br />
