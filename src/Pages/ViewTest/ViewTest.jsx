@@ -4,6 +4,7 @@ import useRemoveModal from "../../Components/useRemoveModal";
 import { Link, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
+import baseUrl from "../../Components/baseUrl";
 
 const ViewTest = (props) => {
   const location = useLocation();
@@ -15,7 +16,7 @@ const ViewTest = (props) => {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/profileData",
+        baseUrl() + "/profileData",
         {
           email: Cookies.get("email"),
         },
@@ -36,7 +37,7 @@ const ViewTest = (props) => {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/df/getAllActiveQuizByCourseAndTopic",
+        baseUrl() + "/df/getAllActiveQuizByCourseAndTopic",
         {
           courseId: courseId,
           topicId: topicId,
