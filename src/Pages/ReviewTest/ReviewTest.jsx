@@ -3,12 +3,13 @@ import Header from "../../Components/Header";
 import { nextPrev, refer, QuizLoad } from "../../Components/quizWorking";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useRemoveModal from "../../Components/useRemoveModal";
 import baseUrl from "../../Components/baseUrl";
 
 function ReviewTest() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { quizId } = location.state;
   const [profileData, setProfileData] = useState([]);
   const [quizResult, setQuizResult] = useState([]);
@@ -228,7 +229,7 @@ function ReviewTest() {
                     </div>
                   ))}
                   {/* <br /> */}
-                  <a className="p-3">
+                  {/* <a className="p-3">
                     {" "}
                     <i className="fa fa-thumbs-up" aria-hidden="true"></i>{" "}
                     &nbsp;10
@@ -244,7 +245,7 @@ function ReviewTest() {
                   </a>
                   <a className="p-3">
                     <i className="fa fa-eye" aria-hidden="true"></i>
-                  </a>
+                  </a> */}
                   <br />
                   <br />
                   <p>
@@ -324,6 +325,15 @@ function ReviewTest() {
               onClick={() => nextPrev(1)}
             >
               Next
+            </button>
+            <button
+              className="btn-mcq"
+              type="button"
+              style={{ marginLeft: "10px" }}
+              id="nextBtn"
+              onClick={() => navigate("/studentDashboard")}
+            >
+              Close
             </button>
           </div>
         </div>

@@ -11,6 +11,7 @@ function Profile() {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [imgLoad, setImgLoad] = useState(false);
+  const [check, setCheck] = useState(false);
   useEffect(() => {
     document.body.style.overflow = "visible";
     axios
@@ -28,7 +29,9 @@ function Profile() {
         }
       )
       .then((response) => {
+        console.log(response.data.Data);
         if (response.status === 200) {
+          console.log(response.data.Data);
           setProfileData(response.data.Data);
           setName(response.data.Data);
         }
@@ -100,36 +103,50 @@ function Profile() {
               }
             );
           }
+        })
+        .catch((e) => {
+          alert(e);
+          setLoading(false);
+          setImgLoad(false);
         });
     } else {
       console.log(profileData);
-      setLoading(false);
-      setImgLoad(false);
-      axios.post(
-        `http://97.74.90.132:8082/userUpdateProfileDetails`,
-        profileData,
-        {
-          headers: {
-            "Acces-Control-Allow-Origin": "*",
-            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-            Authorization: `${Cookies.get("token")}`,
-          },
-        }
-      );
+      axios
+        .post(
+          `http://97.74.90.132:8082/userUpdateProfileDetails`,
+          profileData,
+          {
+            headers: {
+              "Acces-Control-Allow-Origin": "*",
+              Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+              Authorization: `${Cookies.get("token")}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.status == 200) {
+            setLoading(false);
+            setImgLoad(false);
+          }
+        });
     }
   };
 
   const checkedResponse = (items) => {
-    // console.log(items)
     let app = 0;
-    profileData.courseBeans.map((e1) => {
-      e1.topicBeans.map((e2) => {
-        if (items === e2.topicName) app++;
+    if (profileData.courseBeans != null || profileData != []) {
+      profileData.courseBeans.map((e1) => {
+        e1.topicBeans.map((e2) => {
+          if (items === e2.topicName) app++;
+        });
       });
-    });
-    console.log(app);
-    if (app === 1) return true;
-    else return false;
+      console.log(app);
+      if (app === 1) {
+        setCheck(true);
+      } else {
+        setCheck(false);
+      }
+    }
   };
   return (
     <>
@@ -301,9 +318,10 @@ function Profile() {
                     <input
                       className="form-check-input"
                       type="checkbox"
-                      value=""
                       id="hindiCB"
                       checked={checkedResponse(item.topicName)}
+
+                      // checked={check ? true : false}
                     />
                     <label className="form-check-label">{item.topicName}</label>
                   </div>
@@ -325,7 +343,7 @@ function Profile() {
       <footer className="footer mt-auto py-3 main-color-bg border-top">
         <div className="container text-center">
           <span className="white">
-            Copyrights &#169; 2022 BESSTBrahmaputra Exam Success Support Team{" "}
+            Copyrights &#169; 2022 BESST (Brahmaputra Exam Success Support Team)
           </span>
         </div>
       </footer>

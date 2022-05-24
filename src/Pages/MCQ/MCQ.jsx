@@ -14,6 +14,16 @@ const MCQ = () => {
   const [mcqDatas, setMcqDatas] = useState([]);
   const [list, setlist] = useState([]);
 
+  var stringToHTML = function (str) {
+    const htmlStr = str;
+
+    // make a new parser
+    const parser = new DOMParser();
+
+    // convert html string into DOM
+    const document = parser.parseFromString(htmlStr, "text/html");
+    return document;
+  };
   // useEffect(() => {
   //   window.location.reload();
 
@@ -263,7 +273,9 @@ const MCQ = () => {
               {item.quesmasters.map((items, i) => (
                 <div>
                   <label>
-                    Q{items.quesId}.&nbsp;&nbsp; &nbsp;{items.question}
+                    Q{items.quesId}.&nbsp;&nbsp; &nbsp;
+                    {/* stringToHTML(items.question) */}
+                    {stringToHTML(items.question)}
                   </label>
                   <br />
                   {items.optionBeans.map((answer, key) => (
