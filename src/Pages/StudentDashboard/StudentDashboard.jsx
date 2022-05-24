@@ -13,17 +13,6 @@ function StudentDashboard() {
 
   useEffect(() => {
     document.body.style.overflow = "visible";
-    const modal = document.querySelector(".modal-backdrop");
-    const courseModalbtn = document.querySelector(".courseModalbtn");
-    const modalCourseSelect = document.querySelector(".modalCourseSelect");
-
-    courseModalbtn.addEventListener("click", () => {
-      modalCourseSelect.classList.remove("show");
-      modalCourseSelect.removeAttribute("style");
-      document.body.removeAttribute("class");
-      document.body.style.overflow = "visible";
-      modal.remove();
-    });
   }, []);
 
   useEffect(() => {
@@ -255,7 +244,7 @@ function StudentDashboard() {
                   className="mb-2 white mt-3 font-15"
                   // onClick={() => TestAvailable()}
                 >
-                  Practise Test
+                  Free Practise Test
                 </h5>
                 {/* <h3 className="white fw-bolder">100</h3> */}
               </div>
@@ -461,7 +450,7 @@ function StudentDashboard() {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title main-color" id="scoreModalLabel">
-                Last Test Score
+                Free Practice Test
               </h5>
               <button
                 type="button"
@@ -489,7 +478,7 @@ function StudentDashboard() {
                               }}
                               className="btn main-btn"
                             >
-                              Resume
+                              Open
                             </Link>
                           </div>
                         </div>
@@ -524,10 +513,10 @@ function StudentDashboard() {
             </div>
             <div className="modal-body">
               <div className="row mb-2">
-                <div className="col-md-8">Science (Physics)</div>
+                <div className="col-md-8">Coming Soon..</div>
                 <div className="col-md-4">
-                  <Link to="/" className="btn main-btn ">
-                    View Recording
+                  <Link to="" className="btn main-btn ">
+                    Soon
                   </Link>
                 </div>
               </div>
@@ -535,7 +524,7 @@ function StudentDashboard() {
           </div>
         </div>
       </div>
-
+      {/* 
       <div
         className="modal fade show modalCourseSelect"
         id="courseModal"
@@ -575,7 +564,7 @@ function StudentDashboard() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div
         className="modal fade"
