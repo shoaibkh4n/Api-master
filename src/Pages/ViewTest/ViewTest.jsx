@@ -14,6 +14,7 @@ const ViewTest = (props) => {
   const [testData, setTestData] = useState([]);
 
   useEffect(() => {
+    document.body.style.overflow = "visible";
     axios
       .post(
         baseUrl() + "/profileData",

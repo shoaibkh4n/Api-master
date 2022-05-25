@@ -5,6 +5,7 @@ import useRemoveModal from "../../Components/useRemoveModal";
 
 function FAQ() {
   useRemoveModal();
+  document.body.style.overflow = "visible";
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light px-5 py-1 fixed-top white-bg">
@@ -51,7 +52,7 @@ function FAQ() {
             <p>Yes, there will be free practice papers.</p>
 
             <h4 className="main-color mt-5">
-             2. For which standard the courses are available?{" "}
+              2. For which standard the courses are available?{" "}
             </h4>
             <p>We provide guidance for CUET (UG) 2022. </p>
 
@@ -59,7 +60,7 @@ function FAQ() {
             <p>Yes , you need to subscribe for it. </p>
 
             <h4 className="main-color mt-5">
-             4. How can we contact and report an error, if found?{" "}
+              4. How can we contact and report an error, if found?{" "}
             </h4>
             <p>
               BA student can contact to the team by the provided whatsapp number
@@ -67,7 +68,7 @@ function FAQ() {
             </p>
 
             <h4 className="main-color mt-5">
-             5. Is regional language available?{" "}
+              5. Is regional language available?{" "}
             </h4>
             <p>
               Yes, regional language paper like Bengali and Assamese are

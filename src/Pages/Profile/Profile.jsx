@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header";
 import Cookies from "js-cookie";
+import baseUrl from "../../Components/baseUrl";
 
 function Profile() {
   const [profileData, setProfileData] = useState([]);
@@ -19,7 +20,7 @@ function Profile() {
     document.body.style.overflow = "visible";
     axios
       .post(
-        "http://97.74.90.132:8082/profileData",
+        baseUrl() + "/profileData",
         {
           email: Cookies.get("email"),
         },
@@ -45,7 +46,7 @@ function Profile() {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/df/coursesAndTopics",
+        baseUrl() + "/df/coursesAndTopics",
         {
           courseId: "1",
         },

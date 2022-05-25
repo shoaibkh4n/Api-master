@@ -100,85 +100,45 @@ function ReviewTest() {
         <label className="fw-bold">2</label>
       </div>
 
-      <div href="#" className="float2">
+      <div
+        href="#"
+        className="float2"
+        style={{ overflow: "auto", height: "200px", width: "270px" }}
+      >
         <div className="row" id="progress">
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
-              1
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
-              2
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
-              3
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
-              4
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
-              5
-            </button>
-          </div>
+          {quizResult.map((items, index) => (
+            <>
+              <div>Section : {index + 1}</div>
+              {items.questionsBeans.map((answer, key) => (
+                <div className="col-2" id="track1">
+                  <a>
+                    <button
+                      className="btn btn-que"
+                      // href={`data/1`}
+                      onClick={() => {
+                        refer(index);
+                        const questionStart = document.querySelectorAll(
+                          ".b" + key
+                        )[index];
+                        const headerOffset = 125;
+                        const elementPosition =
+                          questionStart.getBoundingClientRect().top;
+                        const offsetPosition =
+                          elementPosition + window.pageYOffset - headerOffset;
 
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              6
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              7
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              8
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              9
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              10
-            </button>
-          </div>
-
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              11
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              12
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              13
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              14
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              15
-            </button>
-          </div>
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: "smooth",
+                        });
+                      }}
+                    >
+                      {key + 1}
+                    </button>
+                  </a>
+                </div>
+              ))}
+            </>
+          ))}
         </div>
       </div>
       <br />
@@ -195,13 +155,16 @@ function ReviewTest() {
           <div className="tab">
             <div>
               {/* <h2>{item.}</h2> */}
-              {item.questionsBeans.map((items) => (
+              {item.questionsBeans.map((items, keys) => (
                 <div>
-                  <label>
-                    Q{items.quesId}&nbsp;&nbsp; &nbsp;{items.question}
+                  <label className={"b" + keys}>
+                    Q{keys + 1}&nbsp;&nbsp; &nbsp;{" "}
+                    <span
+                      dangerouslySetInnerHTML={{ __html: items.question }}
+                    ></span>
                   </label>
                   <br />
-                  {items.optionBeans.map((answer) => (
+                  {items.optionBeans.map((answer, key) => (
                     <div>
                       <div className="form-check">
                         <input
