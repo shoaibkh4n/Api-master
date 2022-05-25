@@ -14,6 +14,7 @@ function Profile() {
   const [courseName, setCourseName] = useState([]);
   const [loading, setLoading] = useState(false);
   const [imgLoad, setImgLoad] = useState(false);
+  const [checked, setChecked] = useState([]);
   useEffect(() => {
     document.body.style.overflow = "visible";
     axios
@@ -31,8 +32,11 @@ function Profile() {
         }
       )
       .then((response) => {
+        console.log(response.data.Data);
         if (response.status === 200) {
+          console.log(response.data.Data);
           setProfileData(response.data.Data);
+          setCourseName(response.data.Data.courseBeans);
           setName(response.data.Data);
         }
       });
@@ -103,42 +107,53 @@ function Profile() {
               }
             );
           }
+        })
+        .catch((e) => {
+          alert(e);
+          setLoading(false);
+          setImgLoad(false);
         });
     } else {
-      // console.log(profileData);
-      setLoading(false);
-      setImgLoad(false);
-      axios.post(
-        `http://97.74.90.132:8082/userUpdateProfileDetails`,
-        profileData,
-        {
-          headers: {
-            "Acces-Control-Allow-Origin": "*",
-            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-            Authorization: `${Cookies.get("token")}`,
-          },
-        }
-      );
+      console.log(profileData);
+      axios
+        .post(
+          `http://97.74.90.132:8082/userUpdateProfileDetails`,
+          profileData,
+          {
+            headers: {
+              "Acces-Control-Allow-Origin": "*",
+              Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+              Authorization: `${Cookies.get("token")}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.status == 200) {
+            setLoading(false);
+            setImgLoad(false);
+          }
+        });
     }
   };
 
   const checkedResponse = (items) => {
-    // console.log(items)
     let app = 0;
-    profileData.courseBeans.map((e1) => {
-      e1.topicBeans.map((e2) => {
-        if (items === e2.topicName) app++;
+    if (courseName != null || courseName != []) {
+      courseName.map((e1) => {
+        e1.topicBeans.map((e2) => {
+          if (items === e2.topicName) app++;
+        });
       });
-    });
+    }
     // console.log(app);
     if (app === 1) return true;
     // else return false;
   };
   const AnswerSet = (item) => {
-    var arrayName = Object.assign([],list);
-    arrayName.push({item})
-    setlist(arrayName)
-    console.log("res",list)
+    var arrayName = Object.assign([], list);
+    arrayName.push({ item });
+    setlist(arrayName);
+    console.log("res", courseName);
   };
   // const oncheckBox = (event, selectedCard) => {
   //   if (event === true) {
@@ -319,25 +334,25 @@ function Profile() {
             />
             <br />
             <label className="p-2">Course Name:</label>
-            {subjects ? subjects.map((items) => (
-              <select
-                className="form-select"
-                aria-label="Default select example"
-              >
-                 <option selected>
-                  Select Course
-                </option>
-                <option value={items.courseId} >
-                  {items.courseName}
-                </option>
-              </select>
-            )): " "}
+            {subjects.length > 0
+              ? subjects.map((items) => (
+                  <select
+                    className="form-select"
+                    aria-label="Default select example"
+                    onChange={() => setChecked(items)}
+                  >
+                    <option selected>Select Course</option>
+                    <option value={items.courseId}>{items.courseName}</option>
+                  </select>
+                ))
+              : ""}
             <br />
             <label className="p-2">Available Subjects:</label>
-            {subjects ? subjects.map((items) => (
+            {console.log(checked)}
+            {checked.length !== 0 ? (
               <div className="form-check">
-                <label className="form-check-label">{items.courseName}</label>
-                {items.topicBeans.map((item) => (
+                <label className="form-check-label">{checked.courseName}</label>
+                {checked.topicBeans.map((item) => (
                   <div>
                     <input
                       className="form-check-input"
@@ -352,7 +367,9 @@ function Profile() {
                 ))}
                 <br />
               </div>
-            )): ""}
+            ) : (
+              ""
+            )}
             <button
               className="btn main-btn float-end "
               onClick={() => onSubmit()}
@@ -367,7 +384,7 @@ function Profile() {
       <footer className="footer mt-auto py-3 main-color-bg border-top">
         <div className="container text-center">
           <span className="white">
-            Copyrights &#169; 2022 BESSTBrahmaputra Exam Success Support Team{" "}
+            Copyrights &#169; 2022 BESST (Brahmaputra Exam Success Support Team)
           </span>
         </div>
       </footer>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header";
-import { nextPrev, refer, QuizLoad } from "../../Components/quizWorking";
+import { nextPrev, refer, QuizLoad,navigate } from "../../Components/quizWorking";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -8,16 +8,44 @@ import baseUrl from "../../Components/baseUrl";
 
 const MCQ = () => {
   const location = useLocation();
-  const { quizId, courseId, name } = location.state;
+  const { quizId, courseId, name,quizCode,level,negativeMarks } = location.state;
   const [profileData, setProfileData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mcqDatas, setMcqDatas] = useState([]);
+  const [time, setTime] = React.useState(0);
+  const [timerOn, setTimerOn] = React.useState(false);
+
   const [list, setlist] = useState([]);
 
+  var stringToHTML = function (str) {
+    const htmlStr = str;
+
+    // make a new parser
+    const parser = new DOMParser();
+
+    // convert html string into DOM
+    const document = parser.parseFromString(htmlStr, "text/html");
+    return document;
+  };
   // useEffect(() => {
   //   window.location.reload();
 
-  // },[loading])
+  // const Page = (item) => {
+  //   if(event)
+  // }
+  useEffect(() => {
+    let interval = null;
+    setTimerOn(true)
+    if (timerOn) {
+      interval = setInterval(() => {
+        setTime((prevTime) => prevTime + 10);
+      }, 10);
+    } else if (!timerOn) {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [timerOn]);
   useEffect(() => {
     document.body.style.overflow = "visible";
     setLoading(true);
@@ -143,96 +171,56 @@ const MCQ = () => {
         <label>Given Time : &nbsp;</label>{" "}
         <label className="fw-bold">01:30:00</label>
         <br />
+        <div id="display">
         <label>Taken Time : &nbsp;</label>{" "}
-        <label className="fw-bold">01:35:07</label>
+        <span>{("0" + Math.floor((time / 600000) % 60)).slice(-2)}:</span>
+        <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
+        <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>
+        {/* <span>{("0" + ((time / 10) % 100)).slice(-2)}</span> */}
+        </div>
       </div>
       <div href="#" className="float3">
         <label>Quiz Code : &nbsp;</label>{" "}
-        <label className="fw-bold">MA001</label>
+        <label className="fw-bold">{quizCode}</label>
         <br />
         <label>Complexity : &nbsp;</label>{" "}
-        <label className="fw-bold">Medium</label>
+        <label className="fw-bold">{level}</label>
         <br />
         <label>Nagetive Marks : &nbsp;</label>{" "}
-        <label className="fw-bold">2</label>
+        <label className="fw-bold">{negativeMarks}</label>
       </div>
       <div href="#" className="float2">
         <div className="row" id="progress">
           <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
+            <button
+              className="btn btn-que"
+              // href={`data/1`}
+              onClick={() => refer(0)}
+            >
               1
             </button>
           </div>
           <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
+            <button className="btn btn-que" onClick={() => refer(1)}>
               2
             </button>
           </div>
           <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
+            <button
+              className="btn btn-que"
+              // aria-expanded="false"
+              onClick={() =>refer(2)}
+            >
               3
             </button>
           </div>
           <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
+            <button
+              className="btn btn-que"
+              aria-expanded="false"
+              onClick={() => refer(3)}
+            >
               4
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(0)}>
-              5
-            </button>
-          </div>
-
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              6
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              7
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              8
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              9
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              10
-            </button>
-          </div>
-
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              11
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              12
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              13
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              14
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(2)}>
-              15
             </button>
           </div>
         </div>
@@ -243,8 +231,8 @@ const MCQ = () => {
       <br />
 
       <div style={{ textAlign: "center", marginTop: "40px" }}>
-        {mcqDatas.map(() => (
-          <span className="step"></span>
+        {mcqDatas.map((item) => (
+          <span className="step" id={`data/${item.topicId}`}></span>
         ))}
       </div>
 
@@ -257,13 +245,16 @@ const MCQ = () => {
       >
         {/* {console.log(mcqDatas)} */}
         {mcqDatas.map((item) => (
-          <div className="tab">
+          <div className="tab" id={`data/${item.topicId}`}>
             <div>
               <h2>{item.topicName}</h2>
               {item.quesmasters.map((items, i) => (
                 <div>
                   <label>
-                    Q{items.quesId}.&nbsp;&nbsp; &nbsp;{items.question}
+                    Q{items.quesId}.&nbsp;&nbsp; &nbsp;
+                    <span
+                      dangerouslySetInnerHTML={{ __html: items.question }}
+                    ></span>
                   </label>
                   <br />
                   {items.optionBeans.map((answer, key) => (
@@ -311,6 +302,7 @@ const MCQ = () => {
               type="submit"
               style={{ display: "none" }}
               id="submitbtn"
+              onClick={() => setTimerOn(false)}
             >
               Submit
             </button>

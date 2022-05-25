@@ -194,6 +194,8 @@ function Landing() {
           // alert(response.data.message);
           setLoading(false);
           history("/studentDashboard");
+          const modal = document.querySelector(".modal-backdrop");
+          modal.remove();
         }
       })
       .catch((e) => {
