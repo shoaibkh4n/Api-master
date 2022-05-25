@@ -71,9 +71,7 @@ function Profile() {
       formData.append("uploadPhotoImage", profilePhoto);
       axios
         .post(
-          `http://97.74.90.132:8082/uploadPhoto?userName=${Cookies.get(
-            "email"
-          )}`,
+          baseUrl() + `/uploadPhoto?userName=${Cookies.get("email")}`,
           formData,
           {
             headers: {
@@ -91,17 +89,13 @@ function Profile() {
             });
             setLoading(false);
             setImgLoad(false);
-            axios.post(
-              `http://97.74.90.132:8082/userUpdateProfileDetails`,
-              profileData,
-              {
-                headers: {
-                  "Acces-Control-Allow-Origin": "*",
-                  Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-                  Authorization: `${Cookies.get("token")}`,
-                },
-              }
-            );
+            axios.post(baseUrl() + `/userUpdateProfileDetails`, profileData, {
+              headers: {
+                "Acces-Control-Allow-Origin": "*",
+                Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+                Authorization: `${Cookies.get("token")}`,
+              },
+            });
           }
         })
         .catch((e) => {
@@ -112,17 +106,13 @@ function Profile() {
     } else {
       console.log(profileData);
       axios
-        .post(
-          `http://97.74.90.132:8082/userUpdateProfileDetails`,
-          profileData,
-          {
-            headers: {
-              "Acces-Control-Allow-Origin": "*",
-              Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-              Authorization: `${Cookies.get("token")}`,
-            },
-          }
-        )
+        .post(baseUrl() + `/userUpdateProfileDetails`, profileData, {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        })
         .then((response) => {
           if (response.status == 200) {
             setLoading(false);
