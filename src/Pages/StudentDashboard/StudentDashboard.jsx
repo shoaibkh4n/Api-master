@@ -10,6 +10,8 @@ function StudentDashboard() {
   const [profileData, setProfileData] = useState([]);
   const [videoData, setVideoData] = useState([]);
   const [testData, setTestData] = useState([]);
+  const [courseDetails, setCourseDetails] = useState([]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     document.body.style.overflow = "visible";
@@ -18,7 +20,7 @@ function StudentDashboard() {
   useEffect(() => {
     axios
       .post(
-        baseUrl() + "/profileData",
+        `http://97.74.90.132:8082/profileData`,
         {
           email: Cookies.get("email"),
         },
@@ -34,6 +36,7 @@ function StudentDashboard() {
         console.log("response", response.status);
         if (response.status === 200) {
           setProfileData(response.data.Data);
+          setCourseDetails(response.data.Data.courseBeans);
         }
       });
   }, []);
@@ -136,8 +139,10 @@ function StudentDashboard() {
       });
   };
 
-  return (
+  return profileData && videoData ? (
     <>
+      {console.log(courseDetails)}
+
       <Header profileData={profileData} />
 
       <div className="container border  rounded">
@@ -150,9 +155,11 @@ function StudentDashboard() {
         <div className="row">
           <div className="col-md-6 col-sm-12 p-3 border-end text-center">
             <h3 className="fw-bold">
-              {profileData.firstName + " " + profileData.lastName}{" "}
+              {profileData
+                ? profileData.firstName + " " + profileData.lastName
+                : ""}{" "}
             </h3>
-            <h5>{profileData.qualification}</h5>
+            <h5>{profileData ? profileData.qualification : ""}</h5>
             <p>Profile 30% completed</p>
             <br />
             <Link className="btn main-btn" to="/studentprofile">
@@ -324,16 +331,18 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData.map((item) => (
-                <div className="row mb-2">
-                  <div className="col-md-9">{item.documentName}</div>
-                  <div className="col-md-3">
-                    <a download href="" className="btn main-btn ">
-                      Download
-                    </a>
-                  </div>
-                </div>
-              ))}
+              {testData
+                ? testData.map((item) => (
+                    <div className="row mb-2">
+                      <div className="col-md-9">{item.documentName}</div>
+                      <div className="col-md-3">
+                        <a download href="" className="btn main-btn ">
+                          Download
+                        </a>
+                      </div>
+                    </div>
+                  ))
+                : ""}
               <hr />
             </div>
           </div>
@@ -361,27 +370,29 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData.map((item) => (
-                <div className="row mb-2">
-                  <div className="col-md-9">
-                    <h5>{item.quizTitle}</h5>
-                    <label>{item.timeTaken}</label>{" "}
-                    <label>&nbsp; &nbsp; &nbsp;</label>{" "}
-                    <label>
-                      {moment(item.submittedDate).format("DD-MM-YYYY")}
-                    </label>
-                  </div>
-                  <div className="col-md-3">
-                    <Link
-                      className="btn main-btn "
-                      to="/reviewTest"
-                      state={{ quizId: item.quizResultId }}
-                    >
-                      Review
-                    </Link>
-                  </div>
-                </div>
-              ))}
+              {testData
+                ? testData.map((item) => (
+                    <div className="row mb-2">
+                      <div className="col-md-9">
+                        <h5>{item.quizTitle}</h5>
+                        <label>{item.timeTaken}</label>{" "}
+                        <label>&nbsp; &nbsp; &nbsp;</label>{" "}
+                        <label>
+                          {moment(item.submittedDate).format("DD-MM-YYYY")}
+                        </label>
+                      </div>
+                      <div className="col-md-3">
+                        <Link
+                          className="btn main-btn "
+                          to="/reviewTest"
+                          state={{ quizId: item.quizResultId }}
+                        >
+                          Review
+                        </Link>
+                      </div>
+                    </div>
+                  ))
+                : ""}
             </div>
           </div>
         </div>
@@ -408,32 +419,30 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {profileData.courseBeans
-                ? profileData.courseBeans.map((item) => (
-                    <div>
-                      <div className="col-md-9">{item.courseName}</div>
-                      <br />
-                      {item.topicBeans.map((items) => (
-                        <div className="row mb-2">
-                          <div className="col-md-9">{items.topicName}</div>
-                          <div className="col-md-3">
-                            <Link
-                              to="/viewTest"
-                              state={{
-                                courseId: item.courseId,
-                                topicId: items.topicId,
-                                name: "Test",
-                              }}
-                              className="btn main-btn"
-                            >
-                              View
-                            </Link>
-                          </div>
-                        </div>
-                      ))}
+              {courseDetails.map((item) => (
+                <div>
+                  <div className="col-md-9">{item.courseName}</div>
+                  <br />
+                  {item.topicBeans.map((items) => (
+                    <div className="row mb-2">
+                      <div className="col-md-9">{items.topicName}</div>
+                      <div className="col-md-3">
+                        <Link
+                          to="/viewTest"
+                          state={{
+                            courseId: item.courseId,
+                            topicId: items.topicId,
+                            name: "Test",
+                          }}
+                          className="btn main-btn"
+                        >
+                          View
+                        </Link>
+                      </div>
                     </div>
-                  ))
-                : ""}
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -460,32 +469,30 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {profileData.courseBeans
-                ? profileData.courseBeans.map((item) => (
-                    <div>
-                      <div className="col-md-9">{item.courseName}</div>
-                      <br />
-                      {item.topicBeans.map((items) => (
-                        <div className="row mb-2">
-                          <div className="col-md-9">{items.topicName}</div>
-                          <div className="col-md-3">
-                            <Link
-                              to="/viewTest"
-                              state={{
-                                courseId: item.courseId,
-                                topicId: items.topicId,
-                                name: "Test",
-                              }}
-                              className="btn main-btn"
-                            >
-                              Open
-                            </Link>
-                          </div>
-                        </div>
-                      ))}
+              {courseDetails.map((item) => (
+                <div>
+                  <div className="col-md-9">{item.courseName}</div>
+                  <br />
+                  {item.topicBeans.map((items) => (
+                    <div className="row mb-2">
+                      <div className="col-md-9">{items.topicName}</div>
+                      <div className="col-md-3">
+                        <Link
+                          to="/viewTest"
+                          state={{
+                            courseId: item.courseId,
+                            topicId: items.topicId,
+                            name: "Test",
+                          }}
+                          className="btn main-btn"
+                        >
+                          Open
+                        </Link>
+                      </div>
                     </div>
-                  ))
-                : ""}
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -584,83 +591,42 @@ function StudentDashboard() {
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                onClick={() => setData([])}
               ></button>
             </div>
             <div className="modal-body p-5 mx-auto">
               <label className="p-2">Course Name:</label>
-              <select
-                className="form-select"
-                aria-label="Default select example"
-              >
-                <option value="1" selected>
-                  X th Board
-                </option>
-                <option value="2">XII th Board</option>
-              </select>
-
+              {courseDetails.map((item) => (
+                <select
+                  className="form-select"
+                  aria-label="Default select example"
+                  onChange={() => setData(item)}
+                >
+                  <option selected>Select Course</option>
+                  <option value={item.courseName}>{item.courseName}</option>
+                </select>
+              ))}
               <br />
+              {console.log("data", data.length,data)}
               <label className="p-2">Available Subjects:</label>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="hindiCB"
-                />
-                <label className="form-check-label">Hindi</label>
-                <a
-                  style={{ textDecoration: "none", color: "brown;" }}
-                  target="_blank"
-                  href="https://cdnasb.samarth.ac.in/site/Syllabus%20of%20CUET%20%28UG%29%20-%202022/319_Mathematics.pdf"
-                >
-                  &nbsp;&nbsp;<i className="fa-solid fa-cloud-arrow-down"></i>
-                </a>
-                <br />
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="englishCB"
-                />
-                <label className="form-check-label">English</label>
-                <a
-                  style={{ textDecoration: "none", color: "brown;" }}
-                  target="_blank"
-                  href="https://cdnasb.samarth.ac.in/site/Syllabus%20of%20CUET%20%28UG%29%20-%202022/319_Mathematics.pdf"
-                >
-                  &nbsp;&nbsp;<i className="fa-solid fa-cloud-arrow-down"></i>
-                </a>
-                <br />
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="mathsCB"
-                />
-                <label className="form-check-label">Maths</label>
-                <a
-                  style={{ textDecoration: "none", color: "brown;" }}
-                  target="_blank"
-                  href="https://cdnasb.samarth.ac.in/site/Syllabus%20of%20CUET%20%28UG%29%20-%202022/319_Mathematics.pdf"
-                >
-                  &nbsp;&nbsp;<i className="fa-solid fa-cloud-arrow-down"></i>
-                </a>
-                <br />
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="scienceCB"
-                />
-                <label className="form-check-label">Science</label>
-                <a
-                  style={{ textDecoration: "none", color: "brown;" }}
-                  target="_blank"
-                  href="https://cdnasb.samarth.ac.in/site/Syllabus%20of%20CUET%20%28UG%29%20-%202022/319_Mathematics.pdf"
-                >
-                  &nbsp;&nbsp;<i className="fa-solid fa-cloud-arrow-down"></i>
-                </a>
-              </div>
+              {data.length !== 0 
+                ? (data.topicBeans.map((item) => (
+                    <div>
+                      
+                      <div className="form-check">
+                        {/* <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id="hindiCB"
+                        /> */}
+                        <label className="form-check-label">
+                          {item.topicId}  {item.topicName}
+                        </label>
+                      </div>
+                    </div>
+                  )))
+                : ""}
               <br />
               <button className="btn main-btn">Submit</button>
             </div>
@@ -676,6 +642,8 @@ function StudentDashboard() {
         </div>
       </footer>
     </>
+  ) : (
+    " "
   );
 }
 

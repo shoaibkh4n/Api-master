@@ -82,14 +82,14 @@ function Landing() {
       .post(
         `${baseUrl()}/df/userRegDetails`,
         {
-          title: "Registration",
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password,
-          number: mobile,
-          whatsappNumber: whatsappNumber,
-          course: course,
+          "title": "Registration",
+          "firstName": firstName,
+          "lastName": lastName,
+          "email": email,
+          "password": password,
+          "number": mobile,
+          "whatsappNumber": whatsappNumber,
+          "course": JSON.parse(course),
         },
         {
           headers: {

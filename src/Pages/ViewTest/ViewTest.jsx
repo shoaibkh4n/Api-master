@@ -92,6 +92,9 @@ const ViewTest = (props) => {
                     state={{
                       quizId: item.quizId,
                       courseId: courseId,
+                      quizCode: item.quizCode,
+                      negativeMarks: item.negativeMarks,
+                      level: item.level,
                       name: name,
                     }}
                     className="btn main-btn"
