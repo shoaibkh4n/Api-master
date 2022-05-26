@@ -13,6 +13,7 @@ function TestSubmit() {
   }
   const [profileData, setProfileData] = useState([]);
   useEffect(() => {
+    document.body.style.overflow = "visible";
     axios
       .post(
         baseUrl() + "/profileData",

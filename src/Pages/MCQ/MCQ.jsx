@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header";
-import { nextPrev, refer, QuizLoad,navigate } from "../../Components/quizWorking";
+import {
+  nextPrev,
+  refer,
+  QuizLoad,
+  navigate,
+} from "../../Components/quizWorking";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -8,7 +13,8 @@ import baseUrl from "../../Components/baseUrl";
 
 const MCQ = () => {
   const location = useLocation();
-  const { quizId, courseId, name,quizCode,level,negativeMarks } = location.state;
+  const { quizId, courseId, name, quizCode, level, negativeMarks } =
+    location.state;
   const [profileData, setProfileData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mcqDatas, setMcqDatas] = useState([]);
@@ -17,25 +23,9 @@ const MCQ = () => {
 
   const [list, setlist] = useState([]);
 
-  var stringToHTML = function (str) {
-    const htmlStr = str;
-
-    // make a new parser
-    const parser = new DOMParser();
-
-    // convert html string into DOM
-    const document = parser.parseFromString(htmlStr, "text/html");
-    return document;
-  };
-  // useEffect(() => {
-  //   window.location.reload();
-
-  // const Page = (item) => {
-  //   if(event)
-  // }
   useEffect(() => {
     let interval = null;
-    setTimerOn(true)
+    setTimerOn(true);
     if (timerOn) {
       interval = setInterval(() => {
         setTime((prevTime) => prevTime + 10);
@@ -120,10 +110,10 @@ const MCQ = () => {
         e2?.optionBeans.map((el) => {
           if (event.target.value === el.optionValue) {
             el.selected = 1;
-            return el;
+            // return el;
           } else {
             el.selected = 0;
-            return el;
+            // return el;
           }
         });
         return e2;
@@ -172,11 +162,11 @@ const MCQ = () => {
         <label className="fw-bold">01:30:00</label>
         <br />
         <div id="display">
-        <label>Taken Time : &nbsp;</label>{" "}
-        <span>{("0" + Math.floor((time / 600000) % 60)).slice(-2)}:</span>
-        <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
-        <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>
-        {/* <span>{("0" + ((time / 10) % 100)).slice(-2)}</span> */}
+          <label>Taken Time : &nbsp;</label>{" "}
+          <span>{("0" + Math.floor((time / 600000) % 60)).slice(-2)}:</span>
+          <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
+          <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>
+          {/* <span>{("0" + ((time / 10) % 100)).slice(-2)}</span> */}
         </div>
       </div>
       <div href="#" className="float3">
@@ -189,40 +179,45 @@ const MCQ = () => {
         <label>Nagetive Marks : &nbsp;</label>{" "}
         <label className="fw-bold">{negativeMarks}</label>
       </div>
-      <div href="#" className="float2">
+      <div
+        href="#"
+        className="float2"
+        style={{ overflow: "auto", height: "200px", width: "270px" }}
+      >
         <div className="row" id="progress">
-          <div className="col-2" id="track1">
-            <button
-              className="btn btn-que"
-              // href={`data/1`}
-              onClick={() => refer(0)}
-            >
-              1
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              2
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button
-              className="btn btn-que"
-              // aria-expanded="false"
-              onClick={() =>refer(2)}
-            >
-              3
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button
-              className="btn btn-que"
-              aria-expanded="false"
-              onClick={() => refer(3)}
-            >
-              4
-            </button>
-          </div>
+          {mcqDatas.map((items, index) => (
+            <>
+              <div>Section : {index + 1}</div>
+              {items.quesmasters.map((answer, key) => (
+                <div className="col-2" id="track1">
+                  <a>
+                    <button
+                      className="btn btn-que"
+                      // href={`data/1`}
+                      onClick={() => {
+                        refer(index);
+                        const questionStart = document.querySelectorAll(
+                          ".m" + key
+                        )[index];
+                        const headerOffset = 125;
+                        const elementPosition =
+                          questionStart.getBoundingClientRect().top;
+                        const offsetPosition =
+                          elementPosition + window.pageYOffset - headerOffset;
+
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: "smooth",
+                        });
+                      }}
+                    >
+                      {key + 1}
+                    </button>
+                  </a>
+                </div>
+              ))}
+            </>
+          ))}
         </div>
       </div>
       <br />
@@ -250,8 +245,8 @@ const MCQ = () => {
               <h2>{item.topicName}</h2>
               {item.quesmasters.map((items, i) => (
                 <div>
-                  <label>
-                    Q{items.quesId}.&nbsp;&nbsp; &nbsp;
+                  <label className={"m" + i}>
+                    Q{i + 1}.&nbsp;&nbsp; &nbsp;
                     <span
                       dangerouslySetInnerHTML={{ __html: items.question }}
                     ></span>

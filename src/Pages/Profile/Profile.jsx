@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header";
 import Cookies from "js-cookie";
+import baseUrl from "../../Components/baseUrl";
 
 function Profile() {
   const [profileData, setProfileData] = useState([]);
@@ -19,7 +20,7 @@ function Profile() {
     document.body.style.overflow = "visible";
     axios
       .post(
-        "http://97.74.90.132:8082/profileData",
+        baseUrl() + "/profileData",
         {
           email: Cookies.get("email"),
         },
@@ -45,7 +46,7 @@ function Profile() {
   useEffect(() => {
     axios
       .post(
-        "http://97.74.90.132:8082/df/coursesAndTopics",
+        baseUrl() + "/df/coursesAndTopics",
         {
           courseId: "1",
         },
@@ -75,9 +76,7 @@ function Profile() {
       formData.append("uploadPhotoImage", profilePhoto);
       axios
         .post(
-          `http://97.74.90.132:8082/uploadPhoto?userName=${Cookies.get(
-            "email"
-          )}`,
+          baseUrl() + `/uploadPhoto?userName=${Cookies.get("email")}`,
           formData,
           {
             headers: {
@@ -95,17 +94,13 @@ function Profile() {
             });
             setLoading(false);
             setImgLoad(false);
-            axios.post(
-              `http://97.74.90.132:8082/userUpdateProfileDetails`,
-              profileData,
-              {
-                headers: {
-                  "Acces-Control-Allow-Origin": "*",
-                  Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-                  Authorization: `${Cookies.get("token")}`,
-                },
-              }
-            );
+            axios.post(baseUrl() + `/userUpdateProfileDetails`, profileData, {
+              headers: {
+                "Acces-Control-Allow-Origin": "*",
+                Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+                Authorization: `${Cookies.get("token")}`,
+              },
+            });
           }
         })
         .catch((e) => {
@@ -116,17 +111,13 @@ function Profile() {
     } else {
       console.log(profileData);
       axios
-        .post(
-          `http://97.74.90.132:8082/userUpdateProfileDetails`,
-          profileData,
-          {
-            headers: {
-              "Acces-Control-Allow-Origin": "*",
-              Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-              Authorization: `${Cookies.get("token")}`,
-            },
-          }
-        )
+        .post(baseUrl() + `/userUpdateProfileDetails`, profileData, {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        })
         .then((response) => {
           if (response.status == 200) {
             setLoading(false);
