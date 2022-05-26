@@ -607,12 +607,11 @@ function StudentDashboard() {
                 </select>
               ))}
               <br />
-              {console.log("data", data.length,data)}
+              {console.log("data", data.length, data)}
               <label className="p-2">Available Subjects:</label>
-              {data.length !== 0 
-                ? (data.topicBeans.map((item) => (
+              {data.length !== 0
+                ? data.topicBeans.map((item) => (
                     <div>
-                      
                       <div className="form-check">
                         {/* <input
                           className="form-check-input"
@@ -621,11 +620,11 @@ function StudentDashboard() {
                           id="hindiCB"
                         /> */}
                         <label className="form-check-label">
-                          {item.topicId}  {item.topicName}
+                          {item.topicId} {item.topicName}
                         </label>
                       </div>
                     </div>
-                  )))
+                  ))
                 : ""}
               <br />
               <button className="btn main-btn">Submit</button>

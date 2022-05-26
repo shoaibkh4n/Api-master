@@ -23,22 +23,6 @@ const MCQ = () => {
 
   const [list, setlist] = useState([]);
 
-  var stringToHTML = function (str) {
-    const htmlStr = str;
-
-    // make a new parser
-    const parser = new DOMParser();
-
-    // convert html string into DOM
-    const document = parser.parseFromString(htmlStr, "text/html");
-    return document;
-  };
-  // useEffect(() => {
-  //   window.location.reload();
-
-  // const Page = (item) => {
-  //   if(event)
-  // }
   useEffect(() => {
     let interval = null;
     setTimerOn(true);
@@ -213,40 +197,45 @@ const MCQ = () => {
         <label>Nagetive Marks : &nbsp;</label>{" "}
         <label className="fw-bold">{negativeMarks}</label>
       </div>
-      <div href="#" className="float2">
+      <div
+        href="#"
+        className="float2"
+        style={{ overflow: "auto", height: "200px", width: "270px" }}
+      >
         <div className="row" id="progress">
-          <div className="col-2" id="track1">
-            <button
-              className="btn btn-que"
-              // href={`data/1`}
-              onClick={() => refer(0)}
-            >
-              1
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button className="btn btn-que" onClick={() => refer(1)}>
-              2
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button
-              className="btn btn-que"
-              // aria-expanded="false"
-              onClick={() => refer(2)}
-            >
-              3
-            </button>
-          </div>
-          <div className="col-2" id="track1">
-            <button
-              className="btn btn-que"
-              aria-expanded="false"
-              onClick={() => refer(3)}
-            >
-              4
-            </button>
-          </div>
+          {mcqDatas.map((items, index) => (
+            <>
+              <div>Section : {index + 1}</div>
+              {items.quesmasters.map((answer, key) => (
+                <div className="col-2" id="track1">
+                  <a>
+                    <button
+                      className="btn btn-que"
+                      // href={`data/1`}
+                      onClick={() => {
+                        refer(index);
+                        const questionStart = document.querySelectorAll(
+                          ".m" + key
+                        )[index];
+                        const headerOffset = 125;
+                        const elementPosition =
+                          questionStart.getBoundingClientRect().top;
+                        const offsetPosition =
+                          elementPosition + window.pageYOffset - headerOffset;
+
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: "smooth",
+                        });
+                      }}
+                    >
+                      {key + 1}
+                    </button>
+                  </a>
+                </div>
+              ))}
+            </>
+          ))}
         </div>
       </div>
       <br />
@@ -274,8 +263,8 @@ const MCQ = () => {
               <h2>{item.topicName}</h2>
               {item.quesmasters.map((items, i) => (
                 <div>
-                  <label>
-                    Q{items.quesId}.&nbsp;&nbsp; &nbsp;
+                  <label className={"m" + i}>
+                    Q{i + 1}.&nbsp;&nbsp; &nbsp;
                     <span
                       dangerouslySetInnerHTML={{ __html: items.question }}
                     ></span>
