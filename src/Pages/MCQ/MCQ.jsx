@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header";
-import { nextPrev, refer, QuizLoad,navigate } from "../../Components/quizWorking";
+import {
+  nextPrev,
+  refer,
+  QuizLoad,
+  navigate,
+} from "../../Components/quizWorking";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -8,7 +13,8 @@ import baseUrl from "../../Components/baseUrl";
 
 const MCQ = () => {
   const location = useLocation();
-  const { quizId, courseId, name,quizCode,level,negativeMarks } = location.state;
+  const { quizId, courseId, name, quizCode, level, negativeMarks } =
+    location.state;
   const [profileData, setProfileData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mcqDatas, setMcqDatas] = useState([]);
@@ -35,7 +41,7 @@ const MCQ = () => {
   // }
   useEffect(() => {
     let interval = null;
-    setTimerOn(true)
+    setTimerOn(true);
     if (timerOn) {
       interval = setInterval(() => {
         setTime((prevTime) => prevTime + 10);
@@ -115,26 +121,44 @@ const MCQ = () => {
   const navigate = useNavigate();
 
   const AnswerSet = (event) => {
+    // setlist({ ...list });
     let res = mcqDatas.map((e1) => {
       e1?.quesmasters.map((e2) => {
+        if (
+          e2.optionBeans.find((key) => key.optionValue === event.target.value)
+        ) {
+          e2?.optionBeans.map((el) => {
+            if (event.target.value === el.optionValue) {
+              el.selected = 1;
+              return el;
+            } else {
+              el.selected = 0;
+              return el;
+            }
+          });
+        }
+        return e2;
+      });
+      return e1;
+    });
+    console.log(res);
+    setlist(res);
+  };
+
+  const submitQuiz = (e) => {
+    let res = list.map((e1) => {
+      e1?.quesmasters.map((e2) => {
         e2?.optionBeans.map((el) => {
-          if (event.target.value === el.optionValue) {
-            el.selected = 1;
-            return el;
-          } else {
+          if (el.selected === null) {
             el.selected = 0;
             return el;
-          }
+          } else return el;
         });
         return e2;
       });
       return e1;
     });
-    // console.log("res",res)
     setlist(res);
-  };
-
-  const submitQuiz = (e) => {
     axios
       .post(
         baseUrl() + "/df/saveMcqQuizData",
@@ -172,11 +196,11 @@ const MCQ = () => {
         <label className="fw-bold">01:30:00</label>
         <br />
         <div id="display">
-        <label>Taken Time : &nbsp;</label>{" "}
-        <span>{("0" + Math.floor((time / 600000) % 60)).slice(-2)}:</span>
-        <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
-        <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>
-        {/* <span>{("0" + ((time / 10) % 100)).slice(-2)}</span> */}
+          <label>Taken Time : &nbsp;</label>{" "}
+          <span>{("0" + Math.floor((time / 600000) % 60)).slice(-2)}:</span>
+          <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
+          <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>
+          {/* <span>{("0" + ((time / 10) % 100)).slice(-2)}</span> */}
         </div>
       </div>
       <div href="#" className="float3">
@@ -209,7 +233,7 @@ const MCQ = () => {
             <button
               className="btn btn-que"
               // aria-expanded="false"
-              onClick={() =>refer(2)}
+              onClick={() => refer(2)}
             >
               3
             </button>

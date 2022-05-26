@@ -20,7 +20,7 @@ function StudentDashboard() {
   useEffect(() => {
     axios
       .post(
-        `http://97.74.90.132:8082/profileData`,
+        baseUrl() + `/profileData`,
         {
           email: Cookies.get("email"),
         },
