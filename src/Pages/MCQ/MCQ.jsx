@@ -130,19 +130,41 @@ const MCQ = () => {
   };
 
   const submitQuiz = (e) => {
-    let res = list.map((e1) => {
-      e1?.quesmasters.map((e2) => {
-        e2?.optionBeans.map((el) => {
-          if (el.selected === null) {
-            el.selected = 0;
-            return el;
-          } else return el;
+    // console.log("list",list.length)
+    let res;
+    if (list.length > 0) {
+      console.log("1");
+      res = list.map((e1) => {
+        e1?.quesmasters.map((e2) => {
+          e2?.optionBeans.map((el) => {
+            if (el.selected === null) {
+              el.selected = 0;
+              return el;
+            } else return el;
+          });
+          return e2;
         });
-        return e2;
+        return e1;
       });
-      return e1;
-    });
-    setlist(res);
+      // console.log("res",res)
+      setlist(res);
+      console.log("res",list)
+
+    } else {
+      console.log("3");
+       res = mcqDatas.map((e1) => {
+        e1?.quesmasters.map((e2) => {
+          e2?.optionBeans.map((el) => {
+            if (el.selected === null) {
+              el.selected = 0;
+              return el;
+            } else return el;
+          });
+          return e2;
+        });
+        return e1;
+      });
+    }
     axios
       .post(
         baseUrl() + "/df/saveMcqQuizData",
@@ -150,7 +172,7 @@ const MCQ = () => {
           quizId: quizId,
           courseId: courseId,
           userId: Cookies.get("userId"),
-          quizSectionWises: list,
+          quizSectionWises: list.length > 0 ? list : res,
         },
         {
           headers: {
