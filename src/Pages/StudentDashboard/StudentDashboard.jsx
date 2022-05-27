@@ -127,6 +127,7 @@ function StudentDashboard() {
           headers: {
             "Acces-Control-Allow-Origin": "*",
             Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: Cookies.get('token')
           },
         }
       )
@@ -139,6 +140,29 @@ function StudentDashboard() {
       });
   };
 
+  const downloadFile = () => {
+    // axios
+    // .post(
+    //   baseUrl() + "/df/downloadCourseMaterial",
+    //   {
+    //     courseId: "1",
+    //   },
+    //   {
+    //     headers: {
+    //       "Acces-Control-Allow-Origin": "*",
+    //       Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+    //       Authorization: Cookies.get('token')
+    //     },
+    //   }
+    // )
+    // .then((response) => {
+    //   console.log("response", response.status);
+    //   if (response.status === 200) {
+    //     console.log("videoData", response.data.Data);
+    //     setTestData(response.data.Data);
+    //   }
+    // });
+  }
   return profileData && videoData ? (
     <>
       {console.log(courseDetails)}
@@ -334,9 +358,9 @@ function StudentDashboard() {
               {testData
                 ? testData.map((item) => (
                     <div className="row mb-2">
-                      <div className="col-md-9">{item.documentName}</div>
+                      <div className="col-md-9">{item.courseName}</div>
                       <div className="col-md-3">
-                        <a download href="" className="btn main-btn ">
+                        <a download href="" className="btn main-btn " onClick={() => downloadFile()}>
                           Download
                         </a>
                       </div>
@@ -355,6 +379,7 @@ function StudentDashboard() {
         tabindex="-1"
         aria-labelledby="takenModalLabel"
         aria-hidden="true"
+        style={{width: "100%"}}
       >
         <div className="modal-dialog modal-dialog-scrollable downloadModal">
           <div className="modal-content">
@@ -373,14 +398,12 @@ function StudentDashboard() {
               {testData
                 ? testData.map((item) => (
                     <div className="row mb-2">
-                      <div className="col-md-9">
                         <h5>{item.quizTitle}</h5>
-                        <label>{item.timeTaken}</label>{" "}
-                        <label>&nbsp; &nbsp; &nbsp;</label>{" "}
+                        <label>{item.quizCode}</label>{" "}
                         <label>
                           {moment(item.submittedDate).format("DD-MM-YYYY")}
                         </label>
-                      </div>
+
                       <div className="col-md-3">
                         <Link
                           className="btn main-btn "
@@ -404,6 +427,7 @@ function StudentDashboard() {
         tabindex="-1"
         aria-labelledby="availableModalLabel"
         aria-hidden="true"
+        
       >
         <div className="modal-dialog modal-dialog-scrollable downloadModal">
           <div className="modal-content">
@@ -478,11 +502,14 @@ function StudentDashboard() {
                       <div className="col-md-9">{items.topicName}</div>
                       <div className="col-md-3">
                         <Link
-                          to="/viewTest"
+                          to="/studentMCQ"
                           state={{
                             courseId: item.courseId,
                             topicId: items.topicId,
-                            name: "Test",
+                            name: "practise",
+                            quizCode: "", 
+                            level: "", 
+                            negativeMarks: ""
                           }}
                           className="btn main-btn"
                         >

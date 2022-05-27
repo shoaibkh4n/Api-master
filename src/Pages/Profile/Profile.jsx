@@ -3,11 +3,15 @@ import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header";
 import Cookies from "js-cookie";
 import baseUrl from "../../Components/baseUrl";
+// import { Buffer } from "buffer";
 
 function Profile() {
+  let userId = Cookies.get("userId");
+  console.log(JSON.parse(userId), userId);
   const [profileData, setProfileData] = useState([]);
   const [list, setlist] = useState([]);
   const [profilePhoto, setProfilePhoto] = useState(null);
+  const [profileImg, setProfileImg] = useState(null);
   // const [selectedCheckbox2, setSelectedCheckbox2] = useState([]);
 
   const [name, setName] = useState([]);
@@ -15,7 +19,8 @@ function Profile() {
   const [courseName, setCourseName] = useState([]);
   const [loading, setLoading] = useState(false);
   const [imgLoad, setImgLoad] = useState(false);
-  const [checked, setChecked] = useState([]);
+  const [checked, setChecked] = useState(subjects);
+
   useEffect(() => {
     document.body.style.overflow = "visible";
     axios
@@ -39,6 +44,9 @@ function Profile() {
           setProfileData(response.data.Data);
           setCourseName(response.data.Data.courseBeans);
           setName(response.data.Data);
+          setProfileImg(
+            baseUrl() + `/df/showProfilePic/${response.data.Data.image}`
+          );
         }
       });
   }, []);
@@ -54,6 +62,7 @@ function Profile() {
           headers: {
             "Acces-Control-Allow-Origin": "*",
             Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: Cookies.get("token"),
           },
         }
       )
@@ -70,6 +79,7 @@ function Profile() {
   };
 
   const onSubmit = () => {
+    // {console.log(list.length,list)}
     setLoading(true);
     if (profilePhoto !== null) {
       let formData = new FormData();
@@ -88,49 +98,38 @@ function Profile() {
         )
         .then((response) => {
           if (response.status === 200) {
-            setProfileData({
-              ...profileData,
-              image: response.data.Data.UploadPathUrl,
-            });
+            // setProfileImg(response.data.Data.UploadPhotoName);
+            // setProfileData({
+            //   ...profileData,
+            //   image: response.data.Data.UploadPathUrl,
+            // });
             setLoading(false);
             setImgLoad(false);
-            axios
-              .post(baseUrl() + `/userUpdateProfileDetails`, profileData, {
-                headers: {
-                  "Acces-Control-Allow-Origin": "*",
-                  Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-                  Authorization: `${Cookies.get("token")}`,
-                },
-              })
-              .then((response) => {
-                if (response.status == 200) {
-                  if (list !== []) {
-                    axios
-                      .post(
-                        baseUrl() + `/df/addUpdateCourse`,
-                        {
-                          userId: Cookies.get("userId"),
-                          emailId: Cookies.get("email"),
-                          courseId: checked.courseId,
-                          topicBeans: list,
-                        },
-                        {
-                          headers: {
-                            "Acces-Control-Allow-Origin": "*",
-                            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-                            Authorization: `${Cookies.get("token")}`,
-                          },
-                        }
-                      )
-                      .then((response) => {
-                        if (response.status == 200) {
-                          setLoading(false);
-                          setImgLoad(false);
-                        }
-                      });
+            if (list.length > 0) {
+              axios
+                .post(
+                  baseUrl() + `/df/addUpdateCourse`,
+                  {
+                    userId: JSON.parse(userId),
+                    emailId: Cookies.get("email"),
+                    courseId: checked.courseId,
+                    topicBeans: list,
+                  },
+                  {
+                    headers: {
+                      "Acces-Control-Allow-Origin": "*",
+                      Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+                      Authorization: `${Cookies.get("token")}`,
+                    },
                   }
-                }
-              });
+                )
+                .then((response) => {
+                  if (response.status == 200) {
+                    setLoading(false);
+                    setImgLoad(false);
+                  }
+                });
+            }
           }
         })
         .catch((e) => {
@@ -138,53 +137,15 @@ function Profile() {
           setLoading(false);
           setImgLoad(false);
         });
-    } else if (list === []) {
-      axios
-        .post(baseUrl() + `/userUpdateProfileDetails`, profileData, {
-          headers: {
-            "Acces-Control-Allow-Origin": "*",
-            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-            Authorization: `${Cookies.get("token")}`,
-          },
-        })
-        .then((response) => {
-          if (response.status == 200) {
-            setLoading(false);
-            setImgLoad(false);
-            axios
-              .post(
-                baseUrl() + `/df/addUpdateCourse`,
-                {
-                  userId: Cookies.get("userId"),
-                  emailId: Cookies.get("email"),
-                  courseId: checked.courseId,
-                  topicBeans: list,
-                },
-                {
-                  headers: {
-                    "Acces-Control-Allow-Origin": "*",
-                    Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-                    Authorization: `${Cookies.get("token")}`,
-                  },
-                }
-              )
-              .then((response) => {
-                if (response.status == 200) {
-                  setLoading(false);
-                  setImgLoad(false);
-                }
-              });
-          }
-        });
-    } else {
-      console.log(list);
+    } else if (list.length > 0) {
+      console.log("checked",checked.courseId)
       axios
         .post(
           baseUrl() + `/df/addUpdateCourse`,
           {
-            userId: Cookies.get("userId"),
+            userId: JSON.parse(userId),
             emailId: Cookies.get("email"),
-            courseId: checked.courseId,
+            courseId: checked.courseId ? checked.courseId : 1,
             topicBeans: list,
           },
           {
@@ -199,6 +160,46 @@ function Profile() {
           if (response.status == 200) {
             setLoading(false);
             setImgLoad(false);
+          }
+        });
+    } else {
+      axios
+        .post(baseUrl() + `/userUpdateProfileDetails`, profileData, {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: `${Cookies.get("token")}`,
+          },
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            setLoading(false);
+            setImgLoad(false);
+            if (list.length > 0) {
+              axios
+                .post(
+                  baseUrl() + `/df/addUpdateCourse`,
+                  {
+                    userId: JSON.parse(userId),
+                    emailId: Cookies.get("email"),
+                    courseId: checked.courseId,
+                    topicBeans: list,
+                  },
+                  {
+                    headers: {
+                      "Acces-Control-Allow-Origin": "*",
+                      Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+                      Authorization: `${Cookies.get("token")}`,
+                    },
+                  }
+                )
+                .then((response) => {
+                  if (response.status == 200) {
+                    setLoading(false);
+                    setImgLoad(false);
+                  }
+                });
+            }
           }
         });
     }
@@ -217,8 +218,18 @@ function Profile() {
     if (app === 1) return true;
     // else return false;
   };
-  const AnswerSet = (item) => {
-    var arrayName = [...list, item];
+  const AnswerSet = (item,present) => {
+    let array = courseName[present].topicBeans.map((item)=> {
+      return {
+        topicId: item.topicId,
+        topicName: item.topicName
+      }
+    })
+    var arrayName = [
+      ...array,
+      ...list,
+      { topicId: item.topicId, topicName: item.topicName },
+    ];
     setlist(arrayName);
     console.log("res", list);
   };
@@ -255,17 +266,18 @@ function Profile() {
         <br />
         <div className="row mt-4 p-2 faq-row">
           <div className="col-4 p-3">
-            <div height="130px" width="130px" className="border">
+            <div style={{ height: "130px", width: "140px" }} className="border">
               <p>
                 <img
-                  id="output"
+                  id="displayData"
                   height="130px"
-                  width="auto"
-                  src={`http://97.74.90.132:8082/${profileData.image}`}
+                  width="140px"
+                  // value={profileImg}
+                  src={profileImg}
                 />
               </p>
             </div>
-
+            {console.log()}
             <p>
               <input
                 type="file"
@@ -326,14 +338,14 @@ function Profile() {
               }
             />
             <br />
-            <label>Age</label>{" "}
+            {/* <label>Age</label>{" "}
             <input
               type="number"
               className="form-control"
               id="ageProfile"
               value="24"
             />
-            <br />
+            <br /> */}
             <label>Whatsapp Number</label>{" "}
             <input
               type="text"
@@ -391,7 +403,7 @@ function Profile() {
               }
             />
             <br />
-            <label>Xth Marks (if any)</label>{" "}
+            {/* <label>Xth Marks (if any)</label>{" "}
             <input
               type="number"
               className="form-control"
@@ -399,7 +411,7 @@ function Profile() {
               value=""
               placeholder="eg - 7cgpa / 70%"
             />
-            <br />
+            <br /> */}
             <label className="p-2">Course Name:</label>
             {subjects.length > 0
               ? subjects.map((items) => (
@@ -408,14 +420,16 @@ function Profile() {
                     aria-label="Default select example"
                     onChange={() => setChecked(items)}
                   >
-                    <option selected>Select Course</option>
-                    <option value={items.courseId}>{items.courseName}</option>
+                    <option>Select Course</option>
+                    <option selected value={items.courseId}>
+                      {items.courseName}
+                    </option>
                   </select>
                 ))
               : ""}
             <br />
             <label className="p-2">Available Subjects:</label>
-            {console.log(checked)}
+            {console.log("checked", subjects)}
             {checked.length !== 0 ? (
               <div className="form-check">
                 <label className="form-check-label">{checked.courseName}</label>
@@ -427,7 +441,27 @@ function Profile() {
                       id="hindiCB"
                       checked={checkedResponse(item.topicName)}
                       // onChange={(event) => }
-                      onChange={(event) => AnswerSet(item)}
+                      onChange={(event) => AnswerSet(item,checked.courseId)}
+                    />
+                    <label className="form-check-label">{item.topicName}</label>
+                  </div>
+                ))}
+                <br />
+              </div>
+            ) : subjects.length > 0 ? (
+              <div className="form-check">
+                <label className="form-check-label">
+                  {subjects[0].courseName}
+                </label>
+                {subjects[0].topicBeans.map((item) => (
+                  <div>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="hindiCB"
+                      checked={checkedResponse(item.topicName)}
+                      // onChange={(event) => }
+                      onChange={(event) => AnswerSet(item,0)}
                     />
                     <label className="form-check-label">{item.topicName}</label>
                   </div>

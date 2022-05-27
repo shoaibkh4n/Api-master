@@ -86,7 +86,7 @@ function ReviewTest() {
         <label className="fw-bold">01:30:00</label>
         <br />
         <label>Taken Time : &nbsp;</label>{" "}
-        <label className="fw-bold">01:35:07</label>
+        <label className="fw-bold">{quizResult.timeTaken}</label>
       </div>
 
       <div href="#" className="float3">
@@ -153,46 +153,68 @@ function ReviewTest() {
       <form id="regForm">
         {quizResult.map((item) => (
           <div className="tab">
-            <div>
-              {/* <h2>{item.}</h2> */}
-              {item.questionsBeans.map((items, keys) => (
-                <div>
-                  <label className={"b" + keys}>
-                    Q{keys + 1}&nbsp;&nbsp; &nbsp;{" "}
-                    <span
-                      dangerouslySetInnerHTML={{ __html: items.question }}
-                    ></span>
-                  </label>
-                  <br />
-                  {items.optionBeans.map((answer, key) => (
-                    <div>
-                      <div className="form-check">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="check1"
-                          name={answer.quesId}
-                          value={answer.optionValue}
-                          checked={answer.selected === 0 ? false : true}
-                        />
+            {item.paragraphFlag === 1 ? (
+              <div>
+                {/* <h2>{item.}</h2> */}
+                <br />
+                <div style={{ fontSize: "x-large", color: "black" }}>
+                  {item.specialInstruction}
+                </div>
+                <span
+                  dangerouslySetInnerHTML={{ __html: item.paragraph_desc }}
+                ></span>
+                <br />
+                <br />
+                {item.questionsBeans.map((items, keys) => (
+                  <div>
+                    <label className={"b" + keys}>
+                      Q{keys + 1}&nbsp;&nbsp; &nbsp;{" "}
+                      <span
+                        dangerouslySetInnerHTML={{ __html: items.question }}
+                      ></span>
+                      &nbsp;
+                      {items.correctFlag === 1 ? (
+                        <i
+                          class="fa fa-check-circle"
+                          style={{ color: "green", fontSize: "3rem" }}
+                        ></i>
+                      ) : (
+                        <i
+                          class="fa fa-times-circle-o"
+                          style={{ color: "red" }}
+                        ></i>
+                      )}
+                    </label>
+                    <br />
+                    {items.optionBeans.map((answer, key) => (
+                      <div>
+                        <div className="form-check">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="check1"
+                            name={answer.quesId}
+                            value={answer.optionValue}
+                            checked={answer.selected === 0 ? false : true}
+                          />
 
-                        <div>
-                          {answer.optionValue}
-                          &nbsp;
-                          <label className="form-check-label">
-                            {answer.isCorrect === 1 && (
-                              <i
-                                class="fa fa-check-circle"
-                                style={{ color: "green" }}
-                              ></i>
-                            )}
-                          </label>
+                          <div>
+                            {answer.optionValue}
+                            &nbsp;
+                            <label className="form-check-label">
+                              {answer.isCorrect === 1 && (
+                                <i
+                                  class="fa fa-check-circle"
+                                  style={{ color: "green" }}
+                                ></i>
+                              )}
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                  {/* <br /> */}
-                  {/* <a className="p-3">
+                    ))}
+                    {/* <br /> */}
+                    {/* <a className="p-3">
                     {" "}
                     <i className="fa fa-thumbs-up" aria-hidden="true"></i>{" "}
                     &nbsp;10
@@ -210,64 +232,193 @@ function ReviewTest() {
                     <i className="fa fa-eye" aria-hidden="true"></i>
                   </a>
                   <br /> */}
-                  <br />
-                  <p>
-                    <a
-                      className="p-2"
-                      data-toggle="collapse"
-                      href={`#collapseAnswer/${items.quesId}`}
-                      role="button"
-                      aria-expanded="false"
-                      aria-controls={`collapseAnswer/${items.quesId}`}
-                      // onClick={() => AnswerCheck()}
+                    <br />
+                    <p>
+                      <a
+                        className="p-2"
+                        data-toggle="collapse"
+                        href={`#collapseAnswer/${items.quesId}`}
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls={`collapseAnswer/${items.quesId}`}
+                        // onClick={() => AnswerCheck()}
+                      >
+                        Answer
+                      </a>
+                      <a
+                        className="p-2"
+                        data-toggle="collapse"
+                        href={`#collapseExample/${items.quesId}`}
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls={`collapseExample/${items.quesId}`}
+                      >
+                        Explanation
+                      </a>
+
+                      <a className="p-2" href="">
+                        Report
+                      </a>
+
+                      <a className="p-2" href="">
+                        Video
+                      </a>
+                      <a className="p-2" href="">
+                        Help
+                      </a>
+                    </p>
+                    <div
+                      className="collapse"
+                      id={`#collapseAnswer/${items.quesId}`}
                     >
-                      Answer
-                    </a>
-                    <a
-                      className="p-2"
-                      data-toggle="collapse"
-                      href={`#collapseExample/${items.quesId}`}
-                      role="button"
-                      aria-expanded="false"
-                      aria-controls={`collapseExample/${items.quesId}`}
+                      <div className="card card-body">
+                        {items.optionBeans.map((item) => {
+                          if (item.isCorrect === 1) return item.optionValue;
+                        })}
+                      </div>
+                    </div>
+                    <div
+                      className="collapse"
+                      id={`collapseExample/${items.quesId}`}
                     >
-                      Explanation
-                    </a>
-
-                    <a className="p-2" href="">
-                      Report
-                    </a>
-
-                    <a className="p-2" href="">
-                      Video
-                    </a>
-                    <a className="p-2" href="">
-                      Help
-                    </a>
-                  </p>
-                  <div
-                    className="collapse"
-                    id={`#collapseAnswer/${items.quesId}`}
-                  >
-                    <div className="card card-body">
-                      {items.optionBeans.map((item) => {
-                        if (item.isCorrect === 1) return item.optionValue;
-                      })}
+                      <div className="card card-body">
+                        {items.title !== null ? items.title : "No Explanation"}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className="collapse"
-                    id={`collapseExample/${items.quesId}`}
-                  >
-                    <div className="card card-body">
-                      {items.title !== null ? items.title : "No Explanation"}
-                    </div>
-                  </div>
 
-                  <br />
-                </div>
-              ))}
-            </div>
+                    <br />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>
+                {/* <h2>{item.}</h2> */}
+                {item.questionsBeans.map((items, keys) => (
+                  <div>
+                    <label className={"b" + keys}>
+                      Q{keys + 1}&nbsp;&nbsp; &nbsp;{" "}
+                      <span
+                        dangerouslySetInnerHTML={{ __html: items.question }}
+                      ></span>
+                      &nbsp;
+                      {items.correctFlag === 1 ? (
+                        <i
+                          class="fa fa-check-circle"
+                          style={{ color: "green", fontSize: "3rem" }}
+                        ></i>
+                      ) : (
+                        <i
+                          class="fa fa-times-circle-o"
+                          style={{ color: "red" }}
+                        ></i>
+                      )}
+                    </label>
+                    <br />
+                    {items.optionBeans.map((answer, key) => (
+                      <div>
+                        <div className="form-check">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="check1"
+                            name={answer.quesId}
+                            value={answer.optionValue}
+                            checked={answer.selected === 0 ? false : true}
+                          />
+
+                          <div>
+                            {answer.optionValue}
+                            &nbsp;
+                            <label className="form-check-label">
+                              {answer.isCorrect === 1 && (
+                                <i
+                                  class="fa fa-check-circle"
+                                  style={{ color: "green" }}
+                                ></i>
+                              )}
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {/* <br /> */}
+                    {/* <a className="p-3">
+                    {" "}
+                    <i className="fa fa-thumbs-up" aria-hidden="true"></i>{" "}
+                    &nbsp;10
+                  </a>
+                  <a className="p-3">
+                    {" "}
+                    <i
+                      className="fa fa-thumbs-down"
+                      style={{ color: "red" }}
+                      aria-hidden="true"
+                    ></i>
+                    &nbsp; 5
+                  </a>
+                  <a className="p-3">
+                    <i className="fa fa-eye" aria-hidden="true"></i>
+                  </a>
+                  <br /> */}
+                    <br />
+                    <p>
+                      <a
+                        className="p-2"
+                        data-toggle="collapse"
+                        href={`#collapseAnswer/${items.quesId}`}
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls={`collapseAnswer/${items.quesId}`}
+                        // onClick={() => AnswerCheck()}
+                      >
+                        Answer
+                      </a>
+                      <a
+                        className="p-2"
+                        data-toggle="collapse"
+                        href={`#collapseExample/${items.quesId}`}
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls={`collapseExample/${items.quesId}`}
+                      >
+                        Explanation
+                      </a>
+
+                      <a className="p-2" href="">
+                        Report
+                      </a>
+
+                      <a className="p-2" href="">
+                        Video
+                      </a>
+                      <a className="p-2" href="">
+                        Help
+                      </a>
+                    </p>
+                    <div
+                      className="collapse"
+                      id={`#collapseAnswer/${items.quesId}`}
+                    >
+                      <div className="card card-body">
+                        {items.optionBeans.map((item) => {
+                          if (item.isCorrect === 1) return item.optionValue;
+                        })}
+                      </div>
+                    </div>
+                    <div
+                      className="collapse"
+                      id={`collapseExample/${items.quesId}`}
+                    >
+                      <div className="card card-body">
+                        {items.title !== null ? items.title : "No Explanation"}
+                      </div>
+                    </div>
+
+                    <br />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
 

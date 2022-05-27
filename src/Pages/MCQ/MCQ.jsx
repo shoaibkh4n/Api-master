@@ -13,7 +13,7 @@ import baseUrl from "../../Components/baseUrl";
 
 const MCQ = () => {
   const location = useLocation();
-  const { quizId, courseId, name, quizCode, level, negativeMarks } =
+  const { quizId, courseId, name, quizCode, level, negativeMarks,topicId } =
     location.state;
   const [profileData, setProfileData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -73,6 +73,7 @@ const MCQ = () => {
               headers: {
                 "Acces-Control-Allow-Origin": "*",
                 Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+                Authorization: Cookies.get("token"),
               },
             }
           )
@@ -86,12 +87,14 @@ const MCQ = () => {
           .post(
             baseUrl() + "/df/getPracticeSetByCourseAndTopic",
             {
-              quizId: quizId,
+              topicId: topicId,
+              courseId: courseId,
             },
             {
               headers: {
                 "Acces-Control-Allow-Origin": "*",
                 Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+                Authorization : Cookies.get("token")
               },
             }
           )
@@ -148,11 +151,10 @@ const MCQ = () => {
       });
       // console.log("res",res)
       setlist(res);
-      console.log("res",list)
-
+      console.log("res", list);
     } else {
       console.log("3");
-       res = mcqDatas.map((e1) => {
+      res = mcqDatas.map((e1) => {
         e1?.quesmasters.map((e2) => {
           e2?.optionBeans.map((el) => {
             if (el.selected === null) {
@@ -178,7 +180,7 @@ const MCQ = () => {
           headers: {
             "Acces-Control-Allow-Origin": "*",
             Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-            // "Authorization": `${Cookies.get('token')}`
+            Authorization: `${Cookies.get("token")}`,
           },
         }
       )
@@ -281,37 +283,80 @@ const MCQ = () => {
         {/* {console.log(mcqDatas)} */}
         {mcqDatas.map((item) => (
           <div className="tab" id={`data/${item.topicId}`}>
-            <div>
-              <h2>{item.topicName}</h2>
-              {item.quesmasters.map((items, i) => (
-                <div>
-                  <label className={"m" + i}>
-                    Q{i + 1}.&nbsp;&nbsp; &nbsp;
-                    <span
-                      dangerouslySetInnerHTML={{ __html: items.question }}
-                    ></span>
-                  </label>
-                  <br />
-                  {items.optionBeans.map((answer, key) => (
-                    <div className="form-check">
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        id="check1"
-                        name={items.quesId}
-                        value={answer.optionValue}
-                        onChange={(e) => AnswerSet(e)}
-                      />
-                      <label className="form-check-label">
-                        {answer.optionValue}
-                      </label>
-                    </div>
-                  ))}
+            {item.paragraphFlag ? item.paragraphFlag === 1 ? (
+              <div>
+                <h2>{item.topicName ? item.topicName : ""}</h2>
+                <br />
+                <div style={{ fontSize: "x-large", color: "black" }}>
+                  {item.specialInstruction}
                 </div>
-              ))}
-              <br />
-              <br />
-            </div>
+                <span
+                  dangerouslySetInnerHTML={{ __html: item.paragraph_desc }}
+                ></span>
+                <br />
+                <br />
+                {item.quesmasters.map((items, i) => (
+                  <div>
+                    <label className={"m" + i}>
+                      Q{i + 1}.&nbsp;&nbsp; &nbsp;
+                      <span
+                        dangerouslySetInnerHTML={{ __html: items.question }}
+                      ></span>
+                    </label>
+                    <br />
+                    {items.optionBeans.map((answer, key) => (
+                      <div className="form-check">
+                        <input
+                          type="radio"
+                          className="form-check-input"
+                          id="check1"
+                          name={items.quesId}
+                          value={answer.optionValue}
+                          onChange={(e) => AnswerSet(e)}
+                        />
+                        <label className="form-check-label">
+                          {answer.optionValue}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+                <br />
+                <br />
+              </div>
+            ) : (
+              <div>
+                <h2>{item.topicName}</h2>
+                {item.quesmasters.map((items, i) => (
+                  <div>
+                    <label className={"m" + i}>
+                      Q{i + 1}.&nbsp;&nbsp; &nbsp;
+                      <span
+                        dangerouslySetInnerHTML={{ __html: items.question }}
+                      ></span>
+                    </label>
+                    <br />
+                    {items.optionBeans.map((answer, key) => (
+                      <div className="form-check">
+                        <input
+                          type="radio"
+                          className="form-check-input"
+                          id="check1"
+                          name={items.quesId}
+                          value={answer.optionValue}
+                          onChange={(e) => AnswerSet(e)}
+                        />
+                        <label className="form-check-label">
+                          {answer.optionValue}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+                <br />
+                <br />
+              </div>
+            ): ""}
           </div>
         ))}
         <div style={{ overflow: "auto" }}>

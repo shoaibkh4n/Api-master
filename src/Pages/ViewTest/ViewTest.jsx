@@ -36,26 +36,28 @@ const ViewTest = (props) => {
       });
   }, []);
   useEffect(() => {
-    axios
-      .post(
-        baseUrl() + "/df/getAllActiveQuizByCourseAndTopic",
-        {
-          courseId: courseId,
-          topicId: topicId,
-        },
-        {
-          headers: {
-            "Acces-Control-Allow-Origin": "*",
-            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-          },
-        }
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          setTestData(response.data.Data);
-          console.log("testData", testData);
-        }
-      });
+        axios
+          .post(
+            baseUrl() + "/df/getAllActiveQuizByCourseAndTopic",
+            {
+              courseId: courseId,
+              topicId: topicId,
+            },
+            {
+              headers: {
+                "Acces-Control-Allow-Origin": "*",
+                Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+                Authorization: Cookies.get("token"),
+              },
+            }
+          )
+          .then((response) => {
+            if (response.status === 200) {
+              setTestData(response.data.Data);
+              console.log("testData", testData);
+            }
+          })
+     
   }, []);
   useRemoveModal();
   return (
@@ -93,6 +95,7 @@ const ViewTest = (props) => {
                     state={{
                       quizId: item.quizId,
                       courseId: courseId,
+                      topicId: topicId,
                       quizCode: item.quizCode,
                       negativeMarks: item.negativeMarks,
                       level: item.level,
