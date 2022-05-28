@@ -13,7 +13,7 @@ import baseUrl from "../../Components/baseUrl";
 
 const MCQ = () => {
   const location = useLocation();
-  const { quizId, courseId, name, quizCode, level, negativeMarks,topicId } =
+  const { quizId, courseId, name, quizCode, level, negativeMarks, topicId } =
     location.state;
   const [profileData, setProfileData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -94,7 +94,7 @@ const MCQ = () => {
               headers: {
                 "Acces-Control-Allow-Origin": "*",
                 Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-                Authorization : Cookies.get("token")
+                Authorization: Cookies.get("token"),
               },
             }
           )
@@ -211,55 +211,63 @@ const MCQ = () => {
           {/* <span>{("0" + ((time / 10) % 100)).slice(-2)}</span> */}
         </div>
       </div>
-      <div href="#" className="float3">
-        <label>Quiz Code : &nbsp;</label>{" "}
-        <label className="fw-bold">{quizCode}</label>
-        <br />
-        <label>Complexity : &nbsp;</label>{" "}
-        <label className="fw-bold">{level}</label>
-        <br />
-        <label>Nagetive Marks : &nbsp;</label>{" "}
-        <label className="fw-bold">{negativeMarks}</label>
-      </div>
+      {name === "Test" ? (
+        <div href="#" className="float3">
+          <label>Quiz Code : &nbsp;</label>{" "}
+          <label className="fw-bold">{quizCode}</label>
+          <br />
+          <label>Complexity : &nbsp;</label>{" "}
+          <label className="fw-bold">{level}</label>
+          <br />
+          <label>Nagetive Marks : &nbsp;</label>{" "}
+          <label className="fw-bold">{negativeMarks}</label>
+        </div>
+      ) : (
+        ""
+      )}
       <div
         href="#"
         className="float2"
         style={{ overflow: "auto", height: "200px", width: "270px" }}
       >
         <div className="row" id="progress">
-          {mcqDatas.map((items, index) => (
-            <>
-              <div>Section : {index + 1}</div>
-              {items.quesmasters.map((answer, key) => (
-                <div className="col-2" id="track1">
-                  <a>
-                    <button
-                      className="btn btn-que"
-                      // href={`data/1`}
-                      onClick={() => {
-                        refer(index);
-                        const questionStart = document.querySelectorAll(
-                          ".m" + key
-                        )[index];
-                        const headerOffset = 125;
-                        const elementPosition =
-                          questionStart.getBoundingClientRect().top;
-                        const offsetPosition =
-                          elementPosition + window.pageYOffset - headerOffset;
+          {name === "Test"
+            ? mcqDatas.map((items, index) => (
+                <>
+                  <div>Section : {index + 1}</div>
+                  {items.quesmasters.map((answer, key) => (
+                    <div className="col-2" id="track1">
+                      <a>
+                        <button
+                          className="btn btn-que"
+                          // href={`data/1`}
+                          onClick={() => {
+                            refer(index);
+                            const questionStart = document.querySelectorAll(
+                              ".m" + key
+                            )[index];
+                            const headerOffset = 125;
+                            const elementPosition =
+                              questionStart.getBoundingClientRect().top;
+                            const offsetPosition =
+                              elementPosition +
+                              window.pageYOffset -
+                              headerOffset;
 
-                        window.scrollTo({
-                          top: offsetPosition,
-                          behavior: "smooth",
-                        });
-                      }}
-                    >
-                      {key + 1}
-                    </button>
-                  </a>
-                </div>
-              ))}
-            </>
-          ))}
+                            window.scrollTo({
+                              top: offsetPosition,
+                              behavior: "smooth",
+                            });
+                          }}
+                        >
+                          {key + 1}
+                        </button>
+                      </a>
+                    </div>
+                  ))}
+                </>
+              ))
+            : ""}
         </div>
       </div>
       <br />
@@ -268,9 +276,11 @@ const MCQ = () => {
       <br />
 
       <div style={{ textAlign: "center", marginTop: "40px" }}>
-        {mcqDatas.map((item) => (
-          <span className="step" id={`data/${item.topicId}`}></span>
-        ))}
+        {name === "Test"
+          ? mcqDatas.map((item) => (
+              <span className="step" id={`data/${item.topicId}`}></span>
+            ))
+          : ""}
       </div>
 
       <form
@@ -283,47 +293,81 @@ const MCQ = () => {
         {/* {console.log(mcqDatas)} */}
         {mcqDatas.map((item) => (
           <div className="tab" id={`data/${item.topicId}`}>
-            {item.paragraphFlag ? item.paragraphFlag === 1 ? (
-              <div>
-                <h2>{item.topicName ? item.topicName : ""}</h2>
-                <br />
-                <div style={{ fontSize: "x-large", color: "black" }}>
-                  {item.specialInstruction}
-                </div>
-                <span
-                  dangerouslySetInnerHTML={{ __html: item.paragraph_desc }}
-                ></span>
-                <br />
-                <br />
-                {item.quesmasters.map((items, i) => (
-                  <div>
-                    <label className={"m" + i}>
-                      Q{i + 1}.&nbsp;&nbsp; &nbsp;
-                      <span
-                        dangerouslySetInnerHTML={{ __html: items.question }}
-                      ></span>
-                    </label>
-                    <br />
-                    {items.optionBeans.map((answer, key) => (
-                      <div className="form-check">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="check1"
-                          name={items.quesId}
-                          value={answer.optionValue}
-                          onChange={(e) => AnswerSet(e)}
-                        />
-                        <label className="form-check-label">
-                          {answer.optionValue}
-                        </label>
-                      </div>
-                    ))}
+            {item.paragraphFlag ? (
+              item.paragraphFlag === 1 ? (
+                <div>
+                  <h2>{item.topicName ? item.topicName : ""}</h2>
+                  <br />
+                  <div style={{ fontSize: "x-large", color: "black" }}>
+                    {item.specialInstruction}
                   </div>
-                ))}
-                <br />
-                <br />
-              </div>
+                  <span
+                    dangerouslySetInnerHTML={{ __html: item.paragraph_desc }}
+                  ></span>
+                  <br />
+                  <br />
+                  {item.quesmasters.map((items, i) => (
+                    <div>
+                      <label className={"m" + i}>
+                        Q{i + 1}.&nbsp;&nbsp; &nbsp;
+                        <span
+                          dangerouslySetInnerHTML={{ __html: items.question }}
+                        ></span>
+                      </label>
+                      <br />
+                      {items.optionBeans.map((answer, key) => (
+                        <div className="form-check">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="check1"
+                            name={items.quesId}
+                            value={answer.optionValue}
+                            onChange={(e) => AnswerSet(e)}
+                          />
+                          <label className="form-check-label">
+                            {answer.optionValue}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                  <br />
+                  <br />
+                </div>
+              ) : (
+                <div>
+                  <h2>{item.topicName}</h2>
+                  {item.quesmasters.map((items, i) => (
+                    <div>
+                      <label className={"m" + i}>
+                        Q{i + 1}.&nbsp;&nbsp; &nbsp;
+                        <span
+                          dangerouslySetInnerHTML={{ __html: items.question }}
+                        ></span>
+                      </label>
+                      <br />
+                      {items.optionBeans.map((answer, key) => (
+                        <div className="form-check">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="check1"
+                            name={items.quesId}
+                            value={answer.optionValue}
+                            onChange={(e) => AnswerSet(e)}
+                          />
+                          <label className="form-check-label">
+                            {answer.optionValue}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                  <br />
+                  <br />
+                </div>
+              )
             ) : (
               <div>
                 <h2>{item.topicName}</h2>
@@ -356,7 +400,7 @@ const MCQ = () => {
                 <br />
                 <br />
               </div>
-            ): ""}
+            )}
           </div>
         ))}
         <div style={{ overflow: "auto" }}>
@@ -377,6 +421,7 @@ const MCQ = () => {
             >
               Next
             </button>
+            {name === "Test" ? 
             <button
               className="btn-mcq"
               type="submit"
@@ -385,7 +430,7 @@ const MCQ = () => {
               onClick={() => setTimerOn(false)}
             >
               Submit
-            </button>
+            </button> : "" }
           </div>
         </div>
       </form>
