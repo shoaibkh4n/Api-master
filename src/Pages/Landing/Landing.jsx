@@ -10,7 +10,8 @@ import student from "../../Assets/images/students.png";
 import classname1 from "../../Assets/images/class.png";
 import map from "../../Assets/images/map.png";
 import courses from "../../Assets/images/course.png";
-import teacher from "../../Assets/images/teachers.png";
+import { GoogleLogin, GoogleLogout } from "react-google-login";
+import { useNavigate } from "react-router";
 import mcq from "../../Assets/images/mcq.png";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router";
@@ -20,6 +21,7 @@ import Header from "../../Components/Header";
 import baseUrl from "../../Components/baseUrl";
 
 function Landing() {
+  const clientId = "";
   const history = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -257,6 +259,18 @@ function Landing() {
         }
       });
   };
+  const onLoginSuccess = (res) => {
+    console.log("Login Success:", res.profileObj);
+    history("/studentDashboard");
+
+    // setShowloginButton(false);
+    // setShowlogoutButton(true);
+  };
+
+  const onLoginFailure = (res) => {
+    console.log("Login Failed:", res);
+  };
+
   return (
     <>
       {Cookies.get("token") ? (
@@ -876,14 +890,14 @@ function Landing() {
                     forgotPassword?
                   </a>
                 </div>
-                <div className=" mb-3 text-center">
-                  <p>or </p>
-                  <a className="btn border">
-                    <i className="fa-brands fa-google main-color"></i>{" "}
-                    &nbsp;Gmail
-                  </a>
-                </div>
-
+                <GoogleLogin
+                  clientId={clientId}
+                  buttonText="Sign In"
+                  onSuccess={onLoginSuccess}
+                  onFailure={onLoginFailure}
+                  cookiePolicy={"single_host_origin"}
+                  isSignedIn={true}
+                />
                 {/* <div className="mb-3">
                   <label id="success" className="form-label noti-success">
                     <i className="fa-solid fa-face-grin-stars"></i> Request Sent
