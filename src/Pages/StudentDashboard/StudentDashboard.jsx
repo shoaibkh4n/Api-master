@@ -613,14 +613,12 @@ function StudentDashboard() {
                       <div className="col-md-9">{items.topicName}</div>
                       <div className="col-md-3">
                         <Link
-                          to="/studentMCQ"
+                          to="/viewTest"
                           state={{
                             courseId: item.courseId,
                             topicId: items.topicId,
-                            name: "practise",
-                            quizCode: "",
-                            level: "",
-                            negativeMarks: "",
+                            name: "practice",
+                            
                           }}
                           className="btn main-btn"
                         >

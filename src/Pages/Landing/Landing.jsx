@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../../Assets/images/logo.png";
-import carousel1 from "../../Assets/images/hero-carousel-2.png";
+import carousel1 from "../../Assets/images/hero-carousel-2.svg";
 import about from "../../Assets/images/about.png";
 import exam from "../../Assets/images/exam.png";
 import tenth from "../../Assets/images/10th.png";
@@ -86,7 +86,7 @@ function Landing() {
     setLoading(true);
     axios
       .post(
-        `${baseUrl()}/df/userRegDetails`,
+        `${baseUrl()}/df/userRegDetails/`,
         {
           title: "Registration",
           firstName: firstName,
@@ -153,6 +153,7 @@ function Landing() {
         }
       })
       .catch((e) => {
+        alert("Please Check Details");
         setCourseDetails([]);
         setLoading(false);
       });
@@ -213,18 +214,48 @@ function Landing() {
         }
       })
       .catch((e) => {
-        alert(e);
+        alert("Invalid login Details");
         setLoading(false);
       });
   };
 
   const onSendOtp = () => {
-    setSendOtp(true);
+    axios
+      .post(baseUrl() + `/sendOTP`, {
+        EmailId: email,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setSendOtp(true);
+        }
+      });
   };
 
   const onVerify = () => {
-    setVerifyOtp(true);
-    setSendOtp(false);
+    axios
+      .post(baseUrl() + `/verifyOTP`, {
+        EmailId: email,
+        Otp: otp.otp1 + otp.otp2 + otp.otp3 + otp.otp4,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setVerifyOtp(true);
+          setSendOtp(false);
+        }
+      });
+  };
+  const onPasswordChange = () => {
+    axios
+      .post(baseUrl() + `/forgetPassword`, {
+        EmailId: email,
+        Password: password,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setVerifyOtp(true);
+          setSendOtp(false);
+        }
+      });
   };
   return (
     <>
@@ -317,6 +348,7 @@ function Landing() {
               width="700"
               height="500"
             />
+            {/* <carousel1 /> */}
           </div>
           <div className="col-lg-6">
             <h1 className="display-5 fw-normal lh-1 mb-3 dark-grey ">
@@ -1338,7 +1370,7 @@ function Landing() {
                     // type="submit"
                     className="btn main-btn "
                     // data-mdb-dismiss={!sendOtp ?"modal" : ""}
-                    onClick={() => onVerify()}
+                    onClick={() => onPasswordChange()}
                     // to="/studentDashboard"
                   >
                     {loading ? "Please Wait.." : "Change Password"}

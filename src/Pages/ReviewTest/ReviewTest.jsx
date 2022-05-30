@@ -25,7 +25,7 @@ function ReviewTest() {
     //   quizResult([]);
     // }
   }, []);
-
+  {console.log("quizId",quizId)}
   const profileDataApi = () => {
     document.body.style.overflow = "visible";
     axios
@@ -79,25 +79,25 @@ function ReviewTest() {
   };
   return (
     <>
-      {/* {console.log("quizResult", quizResult)} */}
+      {console.log("quizResult", quizResult)}
       <Header profileData={profileData} />
       <div href="#" className="float">
         <label>Given Time : &nbsp;</label>{" "}
         <label className="fw-bold">01:30:00</label>
         <br />
         <label>Taken Time : &nbsp;</label>{" "}
-        <label className="fw-bold">{quizResult.timeTaken}</label>
+        <label className="fw-bold">{quizResult.length > 0 ?quizResult[0].timeTaken : ""}</label>
       </div>
 
       <div href="#" className="float3">
         <label>Quiz Code : &nbsp;</label>{" "}
-        <label className="fw-bold">MA001</label>
+        <label className="fw-bold">{quizResult.length > 0 ?quizResult[0].quizId : ""}</label>
         <br />
         <label>Complexity : &nbsp;</label>{" "}
         <label className="fw-bold">Medium</label>
         <br />
         <label>Nagetive Marks : &nbsp;</label>{" "}
-        <label className="fw-bold">2</label>
+        <label className="fw-bold">{quizResult.length > 0 ?quizResult[0].negativeMarks : ""}</label>
       </div>
 
       <div
@@ -106,7 +106,7 @@ function ReviewTest() {
         style={{ overflow: "auto", height: "200px", width: "270px" }}
       >
         <div className="row" id="progress">
-          {quizResult.map((items, index) => (
+          {quizResult.length > 0 ? quizResult.map((items, index) => (
             <>
               <div>Section : {index + 1}</div>
               {items.questionsBeans.map((answer, key) => (
@@ -138,7 +138,7 @@ function ReviewTest() {
                 </div>
               ))}
             </>
-          ))}
+          )): ""}
         </div>
       </div>
       <br />
@@ -151,7 +151,7 @@ function ReviewTest() {
         ))}
       </div>
       <form id="regForm">
-        {quizResult.map((item) => (
+        {quizResult.length > 0 ? quizResult.map((item) => (
           <div className="tab">
             {item.paragraphFlag === 1 ? (
               <div>
@@ -420,7 +420,7 @@ function ReviewTest() {
               </div>
             )}
           </div>
-        ))}
+        )) : ""}
 
         <div style={{ overflow: "auto" }}>
           <div style={{ float: "right" }}>

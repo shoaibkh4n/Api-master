@@ -36,38 +36,43 @@ const ViewTest = (props) => {
       });
   }, []);
   useEffect(() => {
-        axios
-          .post(
-            baseUrl() + "/df/getAllActiveQuizByCourseAndTopic",
-            {
-              courseId: courseId,
-              topicId: topicId,
-            },
-            {
-              headers: {
-                "Acces-Control-Allow-Origin": "*",
-                Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-                Authorization: Cookies.get("token"),
-              },
-            }
-          )
-          .then((response) => {
-            if (response.status === 200) {
-              setTestData(response.data.Data);
-              console.log("testData", testData);
-            }
-          })
-     
+    axios
+      .post(
+        baseUrl() + "/df/getAllActiveQuizByCourseAndTopic",
+        {
+          courseId: courseId,
+          topicId: topicId,
+          quizType: name === "Test" ? 1 : 2,
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: Cookies.get("token"),
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setTestData(response.data.Data);
+          console.log("testData", testData);
+        }
+      });
   }, []);
   useRemoveModal();
   return (
     <>
       <Header profileData={profileData} />
       <div className="container" style={{ maxWidth: "80%" }}>
+      
+
         <br />
         <br />
         <br />
         <br />
+        <h2 className="text-center">
+          {name === "Test" ? "Mock Test" : "Practice Test"}
+        </h2>
         {testData.map((item) => (
           <div className="row mt-5 p-5 faq-row">
             <h2 className="text-center">{item.title}</h2>

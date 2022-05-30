@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import ProfilePic from "../../Assets/images/profilePic.jpg";
 import Header from "../../Components/Header";
 import Cookies from "js-cookie";
 import baseUrl from "../../Components/baseUrl";
@@ -38,7 +39,7 @@ function Profile() {
         }
       )
       .then((response) => {
-        console.log(response.data.Data);
+        // console.log(response.data.Data);
         if (response.status === 200) {
           console.log(response.data.Data);
           setProfileData(response.data.Data);
@@ -49,7 +50,7 @@ function Profile() {
           );
         }
       });
-  }, []);
+  }, [loading]);
 
   useEffect(() => {
     axios
@@ -68,10 +69,23 @@ function Profile() {
       )
       .then((response) => {
         if (response.status === 200) {
+          //  let apiData = response.data.Data[0].topicBeans.map((item) => {
+          //     return {
+          //       ...item,
+          //       is_checked: courseName[0].topicBeans.map((items) => {
+          //         if (items.topicId === item.topicId) {
+          //           return true;
+          //         } else return false;
+          //       }),
+          //     };
+
+          //   })
+          //   console.log("data api" ,apiData)
           setSubjects(response.data.Data);
+          // console.log("asbc",subjects)
         }
       });
-  }, []);
+  }, [loading]);
 
   const handleFileInput = (e) => {
     setProfilePhoto(e.target.files[0]);
@@ -79,7 +93,9 @@ function Profile() {
   };
 
   const onSubmit = () => {
-    // {console.log(list.length,list)}
+    {
+      console.log("submit list", list);
+    }
     setLoading(true);
     if (profilePhoto !== null) {
       let formData = new FormData();
@@ -138,7 +154,7 @@ function Profile() {
           setImgLoad(false);
         });
     } else if (list.length > 0) {
-      console.log("checked",checked.courseId)
+      console.log("checked", checked.courseId);
       axios
         .post(
           baseUrl() + `/df/addUpdateCourse`,
@@ -205,58 +221,66 @@ function Profile() {
     }
   };
 
-  const checkedResponse = (items) => {
+  const checkedResponse = (items, index) => {
+    console.log("abcd", items);
     let app = 0;
-    if (courseName != null || courseName != []) {
-      courseName.map((e1) => {
-        e1.topicBeans.map((e2) => {
-          if (items === e2.topicName) app++;
-        });
+    if (courseName.length > 0) {
+      courseName[index].topicBeans.map((e2) => {
+        if (items.topicId === e2.topicId) app = 1;
       });
     }
-    // console.log(app);
+    console.log("return", app);
     if (app === 1) return true;
-    // else return false;
+    else return false;
   };
-  const AnswerSet = (item,present) => {
-    let array = courseName[present].topicBeans.map((item)=> {
-      return {
-        topicId: item.topicId,
-        topicName: item.topicName
-      }
-    })
-    var arrayName = [
-      ...array,
-      ...list,
-      { topicId: item.topicId, topicName: item.topicName },
-    ];
-    setlist(arrayName);
-    console.log("res", list);
-  };
-  // const oncheckBox = (event, selectedCard) => {
-  //   if (event === true) {
-  //     selectedCard = {
-  //       ...selectedCard,
-  //       is_checked: true,
-  //     };
-  //     const tempUserList = [...subjects, selectedCard.id];
-  //     setSelectedCheckbox2(tempUserList);
-  //     for (let i = 0; i < eventList.length; i++) {
-  //       if (eventList[i].id === selectedCard.id) {
-  //         eventList[i]["is_checked"] = event;
-  //       }
-  //     }
-  //   } else if (event === false) {
-  //     setSelectedCheckbox2(profileData.filter((item) => item.id !== selectedCard.id));
 
-  //     for (let i = 0; i < eventList.length; i++) {
-  //       if (eventList[i].id === selectedCard.id) {
-  //         eventList[i]["is_checked"] = event;
-  //       }
-  //     }
-  //   }
-  // };
-  return (
+  const oncheckBox = (event, selectedCard) => {
+    // console.log("event", index);
+    if (event === true) {
+      selectedCard = {
+        ...selectedCard,
+        is_checked: true,
+      };
+      let tempUserList;
+      {
+        courseName.length > 0
+          ? (tempUserList = [...courseName[0].topicBeans, selectedCard])
+          : (tempUserList = [...list, selectedCard]);
+      }
+      setlist(tempUserList);
+      for (let i = 0; i < checked.length; i++) {
+        if (checked[i].topicId === selectedCard.topicId) {
+          checked[i]["is_checked"] = event;
+        }
+      }
+    } else if (event === false) {
+      // console.log(courseName[index].topicBeans);
+      // let tempUserList = []
+      setlist(list.filter((item) => item.topicId !== selectedCard.topicId));
+
+      for (let i = 0; i < checked.length; i++) {
+        if (checked[i].topicId === selectedCard.topicId) {
+          checked[i]["is_checked"] = event;
+        }
+      }
+    }
+    console.log("list", list);
+  };
+
+  const onSelectClick = (data, index) => {
+    console.log("datas", data);
+    let courseName2 = data.topicBeans.map((item) => {
+      return {
+        ...item,
+        is_checked: checkedResponse(item, index),
+      };
+    });
+    console.log("items", courseName2);
+    setChecked(courseName2);
+    setlist(courseName[index].topicBeans);
+  };
+
+  return !loading ? (
     <>
       <Header profileData={name} />
       <div className="container" style={{ maxWidth: "80%" }}>
@@ -273,7 +297,7 @@ function Profile() {
                   height="130px"
                   width="140px"
                   // value={profileImg}
-                  src={profileImg}
+                  src={profileImg ? profileImg : ProfilePic}
                 />
               </p>
             </div>
@@ -414,16 +438,14 @@ function Profile() {
             <br /> */}
             <label className="p-2">Course Name:</label>
             {subjects.length > 0
-              ? subjects.map((items) => (
+              ? subjects.map((items, index) => (
                   <select
                     className="form-select"
                     aria-label="Default select example"
-                    onChange={() => setChecked(items)}
+                    onChange={() => onSelectClick(items, index)}
                   >
-                    <option>Select Course</option>
-                    <option selected value={items.courseId}>
-                      {items.courseName}
-                    </option>
+                    <option selected>Select Course</option>
+                    <option value={items.courseId}>{items.courseName}</option>
                   </select>
                 ))
               : ""}
@@ -433,22 +455,26 @@ function Profile() {
             {checked.length !== 0 ? (
               <div className="form-check">
                 <label className="form-check-label">{checked.courseName}</label>
-                {checked.topicBeans.map((item) => (
+                {checked.map((item) => (
                   <div>
                     <input
                       className="form-check-input"
                       type="checkbox"
                       id="hindiCB"
-                      checked={checkedResponse(item.topicName)}
-                      // onChange={(event) => }
-                      onChange={(event) => AnswerSet(item,checked.courseId)}
+                      checked={item.is_checked}
+                      onChange={(event) =>
+                        oncheckBox(event.target.checked, item)
+                      }
                     />
                     <label className="form-check-label">{item.topicName}</label>
                   </div>
                 ))}
                 <br />
               </div>
-            ) : subjects.length > 0 ? (
+            ) : (
+              " "
+            )}
+            {/*subjects.length > 0 ? (
               <div className="form-check">
                 <label className="form-check-label">
                   {subjects[0].courseName}
@@ -459,7 +485,7 @@ function Profile() {
                       className="form-check-input"
                       type="checkbox"
                       id="hindiCB"
-                      checked={checkedResponse(item.topicName)}
+                      // checked={checkedResponse(item.topicName)}
                       // onChange={(event) => }
                       onChange={(event) => AnswerSet(item,0)}
                     />
@@ -470,7 +496,7 @@ function Profile() {
               </div>
             ) : (
               ""
-            )}
+            )} */}
             <button
               className="btn main-btn float-end "
               onClick={() => onSubmit()}
@@ -490,6 +516,8 @@ function Profile() {
         </div>
       </footer>
     </>
+  ) : (
+    ""
   );
 }
 

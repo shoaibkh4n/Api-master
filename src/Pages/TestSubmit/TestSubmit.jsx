@@ -6,11 +6,9 @@ import axios from "axios";
 import baseUrl from "../../Components/baseUrl";
 
 function TestSubmit() {
-  const { state } = useLocation();
-  const { data } = state;
-  {
-    console.log(data);
-  }
+  const location = useLocation();
+  const { data } = location.state;
+  
   const [profileData, setProfileData] = useState([]);
   useEffect(() => {
     document.body.style.overflow = "visible";
