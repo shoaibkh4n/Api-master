@@ -11,17 +11,18 @@ import classname1 from "../../Assets/images/class.png";
 import map from "../../Assets/images/map.png";
 import courses from "../../Assets/images/course.png";
 import { GoogleLogin, GoogleLogout } from "react-google-login";
-import { useNavigate } from "react-router";
+import teacher from "../../Assets/images/teachers.png";
 import mcq from "../../Assets/images/mcq.png";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Header from "../../Components/Header";
 import baseUrl from "../../Components/baseUrl";
 
 function Landing() {
-  const clientId = "";
+  const clientId =
+    "687458829496-83t97ka8jja2dvulr4ik8un4t262a2ac.apps.googleusercontent.com";
   const history = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -83,6 +84,11 @@ function Landing() {
         }
       });
   }, []);
+
+  const onClose = () => {
+    setVerifyOtp(false);
+    setSendOtp(false);
+  };
 
   const onRegister = () => {
     setLoading(true);
@@ -223,39 +229,46 @@ function Landing() {
 
   const onSendOtp = () => {
     axios
-      .post(baseUrl() + `/sendOTP`, {
+      .post(baseUrl() + `/wl/sendOTP`, {
         EmailId: email,
       })
       .then((response) => {
-        if (response.status === 200) {
+        console.log("res", response.data.ResultCode);
+        if (response.data.ResultCode === "200") {
           setSendOtp(true);
+        } else {
+          alert("Enter valid EmailId");
         }
       });
   };
 
   const onVerify = () => {
     axios
-      .post(baseUrl() + `/verifyOTP`, {
+      .post(baseUrl() + `/wl/verifyOTP`, {
         EmailId: email,
         Otp: otp.otp1 + otp.otp2 + otp.otp3 + otp.otp4,
       })
       .then((response) => {
-        if (response.status === 200) {
+        if (response.data.ResultCode === "200") {
           setVerifyOtp(true);
           setSendOtp(false);
+        } else {
+          alert(response.data.ResultMessage);
         }
       });
   };
   const onPasswordChange = () => {
     axios
-      .post(baseUrl() + `/forgetPassword`, {
+      .post(baseUrl() + `/wl/forgetPassword`, {
         EmailId: email,
         Password: password,
       })
       .then((response) => {
-        if (response.status === 200) {
-          setVerifyOtp(true);
+        if (response.data.ResultCode === "200") {
+          setVerifyOtp(false);
           setSendOtp(false);
+        } else {
+          alert(response.data.ResultMessage);
         }
       });
   };
@@ -890,14 +903,7 @@ function Landing() {
                     forgotPassword?
                   </a>
                 </div>
-                <GoogleLogin
-                  clientId={clientId}
-                  buttonText="Sign In"
-                  onSuccess={onLoginSuccess}
-                  onFailure={onLoginFailure}
-                  cookiePolicy={"single_host_origin"}
-                  isSignedIn={true}
-                />
+
                 {/* <div className="mb-3">
                   <label id="success" className="form-label noti-success">
                     <i className="fa-solid fa-face-grin-stars"></i> Request Sent
@@ -910,6 +916,16 @@ function Landing() {
                     <i className="fa-solid fa-face-dizzy"></i> Error occured
                   </label>
                 </div> */}
+                <div className="mb-3 d-flex justify-content-center">
+                  <GoogleLogin
+                    clientId={clientId}
+                    buttonText="Sign In"
+                    onSuccess={onLoginSuccess}
+                    onFailure={onLoginFailure}
+                    cookiePolicy={"single_host_origin"}
+                    isSignedIn={true}
+                  />
+                </div>
                 <button
                   type="submit"
                   className="btn main-btn "
@@ -1133,6 +1149,7 @@ function Landing() {
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                onClick={() => onClose()}
               ></button>
             </div>
             <div className="modal-body mx-auto">
