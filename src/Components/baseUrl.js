@@ -1,4 +1,4 @@
 export default function baseUrl() {
-  const url = "https://97.74.90.132:8444/besstMainApi";
+  const url = "http://97.74.90.132:8082/besstMainApi";
   return url;
 }

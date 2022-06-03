@@ -108,19 +108,21 @@ const MCQ = () => {
     let res = mcqDatas.map((e1) => {
       e1?.quesmasters.map((e2) => {
         e2?.optionBeans.map((el) => {
+          if (el.selected === null) {
+            el.selected = 0;
+          }
+
           if (event.target.value === el.optionValue) {
             el.selected = 1;
-            // return el;
-          } else {
-            el.selected = 0;
-            // return el;
           }
+          return el;
         });
         return e2;
       });
       return e1;
     });
-    // console.log("res",res)
+    console.log("res", res);
+
     setlist(res);
   };
 
@@ -190,30 +192,28 @@ const MCQ = () => {
               <div>Section : {index + 1}</div>
               {items.quesmasters.map((answer, key) => (
                 <div className="col-2" id="track1">
-                  <a>
-                    <button
-                      className="btn btn-que"
-                      // href={`data/1`}
-                      onClick={() => {
-                        refer(index);
-                        const questionStart = document.querySelectorAll(
-                          ".m" + key
-                        )[index];
-                        const headerOffset = 125;
-                        const elementPosition =
-                          questionStart.getBoundingClientRect().top;
-                        const offsetPosition =
-                          elementPosition + window.pageYOffset - headerOffset;
+                  <button
+                    className="btn btn-que"
+                    // href={`data/1`}
+                    onClick={() => {
+                      refer(index);
+                      const questionStart = document.querySelectorAll(
+                        ".m" + key
+                      )[index];
+                      const headerOffset = 125;
+                      const elementPosition =
+                        questionStart.getBoundingClientRect().top;
+                      const offsetPosition =
+                        elementPosition + window.pageYOffset - headerOffset;
 
-                        window.scrollTo({
-                          top: offsetPosition,
-                          behavior: "smooth",
-                        });
-                      }}
-                    >
-                      {key + 1}
-                    </button>
-                  </a>
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth",
+                      });
+                    }}
+                  >
+                    {key + 1}
+                  </button>
                 </div>
               ))}
             </>
@@ -258,7 +258,7 @@ const MCQ = () => {
                         type="radio"
                         className="form-check-input"
                         id="check1"
-                        name={items.quesId}
+                        name={items.quesId + `${item.topicName}`}
                         value={answer.optionValue}
                         onChange={(e) => AnswerSet(e)}
                       />
