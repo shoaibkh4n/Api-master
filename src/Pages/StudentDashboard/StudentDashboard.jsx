@@ -127,6 +127,7 @@ function StudentDashboard() {
           headers: {
             "Acces-Control-Allow-Origin": "*",
             Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: Cookies.get("token"),
           },
         }
       )
@@ -139,6 +140,9 @@ function StudentDashboard() {
       });
   };
 
+  const downloadFile = (data) => {
+    axios.get(baseUrl() + `/df/downloadFile/${data}`);
+  };
   return profileData && videoData ? (
     <>
       {console.log(courseDetails)}
@@ -331,19 +335,83 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData
-                ? testData.map((item) => (
-                    <div className="row mb-2">
-                      <div className="col-md-9">{item.documentName}</div>
-                      <div className="col-md-3">
-                        <a download href="" className="btn main-btn ">
-                          Download
-                        </a>
-                      </div>
-                    </div>
-                  ))
-                : ""}
-              <hr />
+              <div className="row mb-2">
+                <div>
+                  <table style={{ width: "100%", border: "1px solid black" }}>
+                    <tr>
+                      <th
+                        style={{
+                          width: "40%",
+                          border: "1px solid black",
+                          textAlign: "center",
+                        }}
+                      >
+                        Course Name
+                      </th>
+                      <th
+                        style={{
+                          width: "30%",
+                          border: "1px solid black",
+                          textAlign: "center",
+                        }}
+                      >
+                        File Name
+                      </th>
+                      <th
+                        style={{
+                          width: "30%",
+                          border: "1px solid black",
+                          textAlign: "center",
+                        }}
+                      >
+                        Action
+                      </th>
+                    </tr>
+                    {testData
+                      ? testData.map((item) => (
+                          <tr>
+                            <td
+                              style={{
+                                border: "1px solid black",
+                                textAlign: "center",
+                              }}
+                            >
+                              {item.courseName}
+                            </td>
+                            <td
+                              style={{
+                                border: "1px solid black",
+                                textAlign: "center",
+                              }}
+                            >
+                              {item.documentName}
+                            </td>
+                            <td
+                              style={{
+                                border: "1px solid black",
+                                textAlign: "center",
+                              }}
+                            >
+                              {" "}
+                              <a
+                                download
+                                href=""
+                                className="btn main-btn "
+                                onClick={() => downloadFile(item.documentName)}
+                              >
+                                Download
+                              </a>
+                            </td>
+                          </tr>
+                        ))
+                      : ""}
+                  </table>
+                </div>
+
+                <div className="col-md-3"></div>
+              </div>
+
+              {/* <hr /> */}
             </div>
           </div>
         </div>
@@ -355,6 +423,7 @@ function StudentDashboard() {
         tabindex="-1"
         aria-labelledby="takenModalLabel"
         aria-hidden="true"
+        style={{ width: "100%" }}
       >
         <div className="modal-dialog modal-dialog-scrollable downloadModal">
           <div className="modal-content">
@@ -370,29 +439,95 @@ function StudentDashboard() {
               ></button>
             </div>
             <div className="modal-body">
-              {testData
-                ? testData.map((item) => (
-                    <div className="row mb-2">
-                      <div className="col-md-9">
-                        <h5>{item.quizTitle}</h5>
-                        <label>{item.timeTaken}</label>{" "}
-                        <label>&nbsp; &nbsp; &nbsp;</label>{" "}
-                        <label>
-                          {moment(item.submittedDate).format("DD-MM-YYYY")}
-                        </label>
-                      </div>
-                      <div className="col-md-3">
-                        <Link
-                          className="btn main-btn "
-                          to="/reviewTest"
-                          state={{ quizId: item.quizResultId }}
-                        >
-                          Review
-                        </Link>
-                      </div>
-                    </div>
-                  ))
-                : ""}
+              {/* <div className="col-md-3"> */}
+                <div className="row mb-2">
+                  <table style={{ width: "100%", border: "1px solid black" }}>
+                    <tr>
+                      <th
+                        style={{
+                          width: "40%",
+                          border: "1px solid black",
+                          textAlign: "center",
+                        }}
+                      >
+                        Quiz Title
+                      </th>
+                      <th
+                        style={{
+                          width: "20%",
+                          border: "1px solid black",
+                          textAlign: "center",
+                        }}
+                      >
+                        Quiz Code
+                      </th>
+                      <th
+                        style={{
+                          width: "20%",
+                          border: "1px solid black",
+                          textAlign: "center",
+                        }}
+                      >
+                        Date
+                      </th>
+                      <th
+                        style={{
+                          width: "20%",
+                          border: "1px solid black",
+                          textAlign: "center",
+                        }}
+                      >
+                        Action
+                      </th>
+                    </tr>
+                    {testData
+                      ? testData.map((item) => (
+                          <tr>
+                            <td
+                              style={{
+                                border: "1px solid black",
+                                textAlign: "center",
+                              }}
+                            >
+                              {item.quizTitle}
+                            </td>
+                            <td
+                              style={{
+                                border: "1px solid black",
+                                textAlign: "center",
+                              }}
+                            >
+                              {item.quizCode}
+                            </td>
+                            <td
+                              style={{
+                                border: "1px solid black",
+                                textAlign: "center",
+                              }}
+                            >
+                              {moment(item.submittedDate).format("DD-MM-YYYY")}
+                            </td>
+                            <td
+                              style={{
+                                border: "1px solid black",
+                                textAlign: "center",
+                              }}
+                            >
+                              {" "}
+                              <Link
+                                className="btn main-btn "
+                                to="/reviewTest"
+                                state={{ quizId: item.quizResultId }}
+                              >
+                                Review
+                              </Link>
+                            </td>
+                          </tr>
+                        ))
+                      : ""}
+                  </table>
+                </div>
+              {/* </div> */}
             </div>
           </div>
         </div>
@@ -482,7 +617,8 @@ function StudentDashboard() {
                           state={{
                             courseId: item.courseId,
                             topicId: items.topicId,
-                            name: "Test",
+                            name: "practice",
+                            
                           }}
                           className="btn main-btn"
                         >

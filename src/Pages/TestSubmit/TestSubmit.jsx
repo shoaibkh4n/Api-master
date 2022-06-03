@@ -6,11 +6,9 @@ import axios from "axios";
 import baseUrl from "../../Components/baseUrl";
 
 function TestSubmit() {
-  const { state } = useLocation();
-  const { data } = state;
-  {
-    console.log(data);
-  }
+  const location = useLocation();
+  const { data } = location.state;
+  
   const [profileData, setProfileData] = useState([]);
   useEffect(() => {
     document.body.style.overflow = "visible";
@@ -55,28 +53,42 @@ function TestSubmit() {
           <div className="col-md-12 pt-4 pb-4">
             <div className="row">
               <div className="col-md-12 text-center">
+                <label>Total Questions :</label>
+                <label>&nbsp; &nbsp;</label>
+                <label className="fw-bold">{data.totalQuest}</label>
+                <label>&nbsp; &nbsp;&nbsp; &nbsp;</label>
+                <label>Maximum Marks :</label>
+                <label>&nbsp; &nbsp;</label>
+                <label className="fw-bold">{data.totalMarks}</label>
+              </div>
+              <div className="col-md-12 text-center">
+                <label>Correct Questions:</label>
+                <label>&nbsp; &nbsp;</label>
+                <label className="fw-bold">{data.correctQues}</label>
+                <label>&nbsp; &nbsp;&nbsp; &nbsp;</label>
+                <label>Marks Obtained :</label>
+                <label>&nbsp; &nbsp;</label>
+                <label className="fw-bold">{data.positiveMarks}</label>
+                <label>&nbsp; &nbsp;&nbsp; &nbsp;</label>
+              </div>
+              <div className="col-md-12 text-center">
                 <label>Time Taken :</label>
                 <label>&nbsp; &nbsp;</label>
                 <label className="fw-bold">{data.timeTaken}</label>
-                <label>&nbsp; &nbsp;&nbsp; &nbsp;</label>
-                <label>Questions Attempted :</label>
+                <label>&nbsp; &nbsp;&nbsp;</label>
+                {/* <label>Questions Attempted :</label>
                 <label>&nbsp; &nbsp;</label>
-                <label className="fw-bold">40 / 50</label>
+                <label className="fw-bold">40 / 50</label> */}
                 <label>&nbsp; &nbsp;&nbsp; &nbsp;</label>
-                <br />
-                <br />
-                <h5>Marks</h5>
-
-                <h4 className="fw-bold main-color">{data.marksObtained}</h4>
               </div>
             </div>
 
             <hr />
 
             <div className="row">
-              <div className="col-md-12 text-center">
+              {/* <div className="col-md-12 text-center">
                 <h4 className="text-center">Test Garph</h4>
-              </div>
+              </div> */}
 
               <div className="col-md-12 ">
                 <Link className="btn main-btn float-end" to="/studentDashboard">

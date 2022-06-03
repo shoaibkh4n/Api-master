@@ -42,11 +42,13 @@ const ViewTest = (props) => {
         {
           courseId: courseId,
           topicId: topicId,
+          quizType: name === "Test" ? 1 : 2,
         },
         {
           headers: {
             "Acces-Control-Allow-Origin": "*",
             Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: Cookies.get("token"),
           },
         }
       )
@@ -62,10 +64,15 @@ const ViewTest = (props) => {
     <>
       <Header profileData={profileData} />
       <div className="container" style={{ maxWidth: "80%" }}>
+      
+
         <br />
         <br />
         <br />
         <br />
+        <h2 className="text-center">
+          {name === "Test" ? "Mock Test" : "Practice Test"}
+        </h2>
         {testData.map((item) => (
           <div className="row mt-5 p-5 faq-row">
             <h2 className="text-center">{item.title}</h2>
@@ -93,6 +100,7 @@ const ViewTest = (props) => {
                     state={{
                       quizId: item.quizId,
                       courseId: courseId,
+                      topicId: topicId,
                       quizCode: item.quizCode,
                       negativeMarks: item.negativeMarks,
                       level: item.level,

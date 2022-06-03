@@ -10,10 +10,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import baseUrl from "../../Components/baseUrl";
+import moment from "moment";
 
 const MCQ = () => {
   const location = useLocation();
-  const { quizId, courseId, name, quizCode, level, negativeMarks } =
+  const { quizId, courseId, name, quizCode, level, negativeMarks, topicId } =
     location.state;
   const [profileData, setProfileData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -62,51 +63,34 @@ const MCQ = () => {
   }, []);
 
   useEffect(() => {
-    name === "Test"
-      ? axios
-          .post(
-            baseUrl() + "/df/mcq",
-            {
-              quizId: quizId,
-            },
-            {
-              headers: {
-                "Acces-Control-Allow-Origin": "*",
-                Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-              },
-            }
-          )
-          .then((response) => {
-            if (response.status === 200) {
-              setMcqDatas(response.data.Data);
-              QuizLoad();
-            }
-          })
-      : axios
-          .post(
-            baseUrl() + "/df/getPracticeSetByCourseAndTopic",
-            {
-              quizId: quizId,
-            },
-            {
-              headers: {
-                "Acces-Control-Allow-Origin": "*",
-                Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-              },
-            }
-          )
-          .then((response) => {
-            if (response.status === 200) {
-              setMcqDatas(response.data.Data);
-              QuizLoad();
-            }
-          });
+    axios
+      .post(
+        baseUrl() + "/df/mcq",
+        {
+          quizId: quizId,
+        },
+        {
+          headers: {
+            "Acces-Control-Allow-Origin": "*",
+            Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: Cookies.get("token"),
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setMcqDatas(response.data.Data);
+          QuizLoad();
+        }
+      });
   }, []);
   const navigate = useNavigate();
 
   const AnswerSet = (event) => {
+    // setlist({ ...list });
     let res = mcqDatas.map((e1) => {
       e1?.quesmasters.map((e2) => {
+<<<<<<< HEAD
         e2?.optionBeans.map((el) => {
           if (el.selected === null) {
             el.selected = 0;
@@ -117,16 +101,85 @@ const MCQ = () => {
           }
           return el;
         });
+=======
+        if (
+          e2.optionBeans.find((key) => key.optionValue === event.target.value)
+        ) {
+          e2?.optionBeans.map((el) => {
+            if (event.target.value === el.optionValue) {
+              el.selected = 1;
+              return el;
+            } else {
+              el.selected = 0;
+              return el;
+            }
+          });
+        }
+>>>>>>> d8d669878ebd94ad5272098bdb24096701d7794d
         return e2;
       });
       return e1;
     });
+<<<<<<< HEAD
     console.log("res", res);
 
+=======
+    console.log(res);
+>>>>>>> d8d669878ebd94ad5272098bdb24096701d7794d
     setlist(res);
   };
 
   const submitQuiz = (e) => {
+    let seconds = Math.floor(time / 1000);
+  let minutes = Math.floor(seconds / 60);
+  let hours = Math.floor(minutes / 60);
+
+  seconds = seconds % 60;
+  // 👇️ if seconds are greater than 30, round minutes up (optional)
+  minutes = seconds >= 30 ? minutes + 1 : minutes;
+
+  minutes = minutes % 60;
+
+  // 👇️ If you don't want to roll hours over, e.g. 24 to 00
+  // 👇️ comment (or remove) the line below
+  // commenting next line gets you `24:00:00` instead of `00:00:00`
+  // or `36:15:31` instead of `12:15:31`, etc.
+  hours = hours % 24;
+    let result  = `${hours} : ${minutes} : ${ seconds}`;
+    console.log("result",hours,seconds,minutes,result)
+    let res;
+    if (list.length > 0) {
+      console.log("1");
+      res = list.map((e1) => {
+        e1?.quesmasters.map((e2) => {
+          e2?.optionBeans.map((el) => {
+            if (el.selected === null) {
+              el.selected = 0;
+              return el;
+            } else return el;
+          });
+          return e2;
+        });
+        return e1;
+      });
+      // console.log("res",res)
+      setlist(res);
+      console.log("res", list);
+    } else {
+      console.log("3");
+      res = mcqDatas.map((e1) => {
+        e1?.quesmasters.map((e2) => {
+          e2?.optionBeans.map((el) => {
+            if (el.selected === null) {
+              el.selected = 0;
+              return el;
+            } else return el;
+          });
+          return e2;
+        });
+        return e1;
+      });
+    }
     axios
       .post(
         baseUrl() + "/df/saveMcqQuizData",
@@ -134,13 +187,14 @@ const MCQ = () => {
           quizId: quizId,
           courseId: courseId,
           userId: Cookies.get("userId"),
-          quizSectionWises: list,
+          quizSectionWises: list.length > 0 ? list : res,
+          timeTaken: result,
         },
         {
           headers: {
             "Acces-Control-Allow-Origin": "*",
             Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
-            // "Authorization": `${Cookies.get('token')}`
+            Authorization: `${Cookies.get("token")}`,
           },
         }
       )
@@ -171,6 +225,10 @@ const MCQ = () => {
           {/* <span>{("0" + ((time / 10) % 100)).slice(-2)}</span> */}
         </div>
       </div>
+      {/* ) : (
+        ""
+      )} */}
+
       <div href="#" className="float3">
         <label>Quiz Code : &nbsp;</label>{" "}
         <label className="fw-bold">{quizCode}</label>
@@ -181,6 +239,10 @@ const MCQ = () => {
         <label>Nagetive Marks : &nbsp;</label>{" "}
         <label className="fw-bold">{negativeMarks}</label>
       </div>
+      {/* ) : (
+        ""
+      )} */}
+      {/* {name === "Test" ? ( */}
       <div
         href="#"
         className="float2"
@@ -220,16 +282,22 @@ const MCQ = () => {
           ))}
         </div>
       </div>
+      {/* ) : (
+        " "
+      )} */}
       <br />
       <br />
       <br />
       <br />
-
+      {/* {name === "Test" ? ( */}
       <div style={{ textAlign: "center", marginTop: "40px" }}>
         {mcqDatas.map((item) => (
           <span className="step" id={`data/${item.topicId}`}></span>
         ))}
       </div>
+      {/* ) : (
+        ""
+      )} */}
 
       <form
         id="regForm"
@@ -239,17 +307,21 @@ const MCQ = () => {
         }}
       >
         {/* {console.log(mcqDatas)} */}
-        {mcqDatas.map((item) => (
-          <div className="tab" id={`data/${item.topicId}`}>
-            <div>
-              <h2>{item.topicName}</h2>
-              {item.quesmasters.map((items, i) => (
-                <div>
-                  <label className={"m" + i}>
-                    Q{i + 1}.&nbsp;&nbsp; &nbsp;
+        {/* {name === Test} */}
+        {mcqDatas.length > 0
+          ? mcqDatas.map((item) => (
+              <div className="tab" id={`data/${item.topicId}`}>
+                {item.paragraphFlag === 1 ? (
+                  <div>
+                    <h2>{item.topicName ? item.topicName : ""}</h2>
+                    <br />
+                    <div style={{ fontSize: "x-large", color: "black" }}>
+                      {item.specialInstruction}
+                    </div>
                     <span
-                      dangerouslySetInnerHTML={{ __html: items.question }}
+                      dangerouslySetInnerHTML={{ __html: item.paragraph_desc }}
                     ></span>
+<<<<<<< HEAD
                   </label>
                   <br />
                   {items.optionBeans.map((answer, key) => (
@@ -274,6 +346,75 @@ const MCQ = () => {
             </div>
           </div>
         ))}
+=======
+                    <br />
+                    <br />
+                    {item.quesmasters.map((items, i) => (
+                      <div>
+                        <label className={"m" + i}>
+                          Q{i + 1}.&nbsp;&nbsp; &nbsp;
+                          <span
+                            dangerouslySetInnerHTML={{ __html: items.question }}
+                          ></span>
+                        </label>
+                        <br />
+                        {items.optionBeans.map((answer, key) => (
+                          <div className="form-check">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="check1"
+                              name={items.quesId}
+                              value={answer.optionValue}
+                              onChange={(e) => AnswerSet(e)}
+                            />
+                            <label className="form-check-label">
+                              {answer.optionValue}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                    <br />
+                    <br />
+                  </div>
+                ) : (
+                  <div>
+                    <h2>{item.topicName}</h2>
+                    {item.quesmasters.map((items, i) => (
+                      <div>
+                        <label className={"m" + i}>
+                          Q{i + 1}.&nbsp;&nbsp; &nbsp;
+                          <span
+                            dangerouslySetInnerHTML={{ __html: items.question }}
+                          ></span>
+                        </label>
+                        <br />
+                        {items.optionBeans.map((answer, key) => (
+                          <div className="form-check">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="check1"
+                              name={items.quesId}
+                              value={answer.optionValue}
+                              onChange={(e) => AnswerSet(e)}
+                            />
+                            <label className="form-check-label">
+                              {answer.optionValue}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                    <br />
+                    <br />
+                  </div>
+                )}
+              </div>
+            ))
+          : ""}
+>>>>>>> d8d669878ebd94ad5272098bdb24096701d7794d
         <div style={{ overflow: "auto" }}>
           <div style={{ float: "right" }}>
             <button
@@ -301,6 +442,9 @@ const MCQ = () => {
             >
               Submit
             </button>
+            {/* ) : (
+              ""
+            )} */}
           </div>
         </div>
       </form>

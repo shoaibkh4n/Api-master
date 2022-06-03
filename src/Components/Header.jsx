@@ -26,7 +26,7 @@ function Header(props) {
         <ul className="navbar-nav ms-auto mr-2">
           <li className="nav-item">
             <div className="dropdown" style={{ float: "right" }}>
-              <button className="dropbtn">{props.profileData.firstName}</button>
+              <button className="dropbtn">{props.profileData.firstName ? props.profileData.firstName.match(/(\b\S)?/g).join("").match(/(^\S|\S$)?/g).join("").toUpperCase(): " "}</button> 
               <div className="dropdown-content">
                 <Link to="/">Home</Link>
                 <Link to="/studentDashboard">Dashboard</Link>

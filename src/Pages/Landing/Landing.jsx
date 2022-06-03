@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../../Assets/images/logo.png";
-import carousel1 from "../../Assets/images/hero-carousel-2.png";
+import carousel1 from "../../Assets/images/hero-carousel-2.svg";
 import about from "../../Assets/images/about.png";
 import exam from "../../Assets/images/exam.png";
 import tenth from "../../Assets/images/10th.png";
@@ -10,16 +10,19 @@ import student from "../../Assets/images/students.png";
 import classname1 from "../../Assets/images/class.png";
 import map from "../../Assets/images/map.png";
 import courses from "../../Assets/images/course.png";
+import { GoogleLogin, GoogleLogout } from "react-google-login";
 import teacher from "../../Assets/images/teachers.png";
 import mcq from "../../Assets/images/mcq.png";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Header from "../../Components/Header";
 import baseUrl from "../../Components/baseUrl";
 
 function Landing() {
+  const clientId =
+    "687458829496-83t97ka8jja2dvulr4ik8un4t262a2ac.apps.googleusercontent.com";
   const history = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,8 +36,12 @@ function Landing() {
   const [studentSpeak, setStudentSpeak] = useState([]);
   const [courseDetails, setCourseDetails] = useState([]);
   const [profileData, setProfileData] = useState([]);
+  const [newsData, setNewsData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState("");
+  const [otp, setOtp] = useState("");
+  const [sendOtp, setSendOtp] = useState(false);
+  const [verifyOtp, setVerifyOtp] = useState(false);
 
   useEffect(() => {
     axios
@@ -45,6 +52,7 @@ function Landing() {
           headers: {
             "Acces-Control-Allow-Origin": "*",
             Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: Cookies.get("token"),
           },
         }
       )
@@ -65,6 +73,7 @@ function Landing() {
           headers: {
             "Acces-Control-Allow-Origin": "*",
             Client_ID: "MVOZ7rblFHsvdzk25vsQpQ==",
+            Authorization: Cookies.get("token"),
           },
         }
       )
@@ -76,20 +85,25 @@ function Landing() {
       });
   }, []);
 
+  const onClose = () => {
+    setVerifyOtp(false);
+    setSendOtp(false);
+  };
+
   const onRegister = () => {
     setLoading(true);
     axios
       .post(
-        `${baseUrl()}/df/userRegDetails`,
+        `${baseUrl()}/df/userRegDetails/`,
         {
-          "title": "Registration",
-          "firstName": firstName,
-          "lastName": lastName,
-          "email": email,
-          "password": password,
-          "number": mobile,
-          "whatsappNumber": whatsappNumber,
-          "course": JSON.parse(course),
+          title: "Registration",
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+          number: mobile,
+          whatsappNumber: whatsappNumber,
+          course: JSON.parse(course),
         },
         {
           headers: {
@@ -147,6 +161,7 @@ function Landing() {
         }
       })
       .catch((e) => {
+        alert("Please Check Details");
         setCourseDetails([]);
         setLoading(false);
       });
@@ -175,6 +190,14 @@ function Landing() {
     }
   }, []);
 
+  useEffect(() => {
+    axios.get(baseUrl() + "/df/findNewsEventDtls/1").then((response) => {
+      if (response.status === 200) {
+        setNewsData(response.data.result);
+      }
+    });
+  }, []);
+
   const onLogin = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -199,9 +222,66 @@ function Landing() {
         }
       })
       .catch((e) => {
-        alert(e);
+        alert("Invalid login Details");
         setLoading(false);
       });
+  };
+
+  const onSendOtp = () => {
+    axios
+      .post(baseUrl() + `/wl/sendOTP`, {
+        EmailId: email,
+      })
+      .then((response) => {
+        console.log("res", response.data.ResultCode);
+        if (response.data.ResultCode === "200") {
+          setSendOtp(true);
+        } else {
+          alert("Enter valid EmailId");
+        }
+      });
+  };
+
+  const onVerify = () => {
+    axios
+      .post(baseUrl() + `/wl/verifyOTP`, {
+        EmailId: email,
+        Otp: otp.otp1 + otp.otp2 + otp.otp3 + otp.otp4,
+      })
+      .then((response) => {
+        if (response.data.ResultCode === "200") {
+          setVerifyOtp(true);
+          setSendOtp(false);
+        } else {
+          alert(response.data.ResultMessage);
+        }
+      });
+  };
+  const onPasswordChange = () => {
+    axios
+      .post(baseUrl() + `/wl/forgetPassword`, {
+        EmailId: email,
+        Password: password,
+      })
+      .then((response) => {
+        if (response.data.ResultCode === "200") {
+          setVerifyOtp(false);
+          setSendOtp(false);
+        } else {
+          alert(response.data.ResultMessage);
+        }
+      });
+  };
+  const onLoginSuccess = (res) => {
+    console.log("Login Success:", res.profileObj);
+    history("/studentDashboard");
+
+    // setShowloginButton(false);
+    // setShowlogoutButton(true);
+  };
+
+  const onLoginFailure = (res) => {
+    console.log("Login Failed:", res);
   };
 
   return (
@@ -295,6 +375,7 @@ function Landing() {
               width="700"
               height="500"
             />
+            {/* <carousel1 /> */}
           </div>
           <div className="col-lg-6">
             <h1 className="display-5 fw-normal lh-1 mb-3 dark-grey ">
@@ -428,7 +509,7 @@ function Landing() {
         </div>
       </section>
 
-      {/* <section id="news">
+      <section id="news">
         <br />
         <br />
         <br />
@@ -441,24 +522,26 @@ function Landing() {
               <span className="badge bg-danger">Latest</span>
             </h4>
           </div>
-          <div className="row faq-row">
-            <ul className="p-4">
-              <li className="pb-2">
-                News number one.{" "}
-                <a data-bs-toggle="modal" data-bs-target="#newsModal" href="">
-                  Show
-                </a>
-              </li>
-              <li className="pb-2">
-                News number two <a href="#">Show</a>
-              </li>
-              <li>
-                News number three <a href="#">Show</a>
-              </li>
-            </ul>
+          <div className="row">
+            <div className="col-md-12 ">
+              {newsData.map((item) => (
+                <ul className="p-4">
+                  <li className="ml-5 pb-2">
+                    {item.description}
+                    <a
+                      data-bs-toggle="modal"
+                      data-bs-target="#newsModal"
+                      href=""
+                    >
+                      Show
+                    </a>
+                  </li>
+                </ul>
+              ))}
+            </div>
           </div>
         </div>
-      </section> */}
+      </section>
 
       <section id="student">
         <br />
@@ -802,12 +885,22 @@ function Landing() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-
-                <div className=" mb-3 text-center">
-                  <p>or </p>
-                  <a className="btn border">
-                    <i className="fa-brands fa-google main-color"></i>{" "}
-                    &nbsp;Gmail
+                <div
+                  className="text-center"
+                  style={{
+                    marginTop: "-1rem",
+                  }}
+                >
+                  <a
+                    style={{
+                      fontSize: "10px",
+                    }}
+                    data-bs-toggle="modal"
+                    data-bs-target="#forgotpassword"
+                    href="#"
+                  >
+                    {/* <i className="fa-brands fa-google main-color"></i>{" "} */}
+                    forgotPassword?
                   </a>
                 </div>
 
@@ -823,6 +916,16 @@ function Landing() {
                     <i className="fa-solid fa-face-dizzy"></i> Error occured
                   </label>
                 </div> */}
+                <div className="mb-3 d-flex justify-content-center">
+                  <GoogleLogin
+                    clientId={clientId}
+                    buttonText="Sign In"
+                    onSuccess={onLoginSuccess}
+                    onFailure={onLoginFailure}
+                    cookiePolicy={"single_host_origin"}
+                    isSignedIn={true}
+                  />
+                </div>
                 <button
                   type="submit"
                   className="btn main-btn "
@@ -1022,6 +1125,290 @@ function Landing() {
                 >
                   {loading ? "Please wait..." : "Register"}
                 </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal fade"
+        id="forgotpassword"
+        tabindex="-1"
+        aria-labelledby="forgotpasswordLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="forgotpassword">
+                Reset Your Password
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                onClick={() => onClose()}
+              ></button>
+            </div>
+            <div className="modal-body mx-auto">
+              <form>
+                {verifyOtp ? (
+                  " "
+                ) : (
+                  <div className="input-group mb-3">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text" id="basic-addon1">
+                        <i className="fa-solid fa-at main-color"></i>
+                      </span>
+                    </div>
+                    <input
+                      id="email"
+                      type="text"
+                      className="form-control"
+                      placeholder="Email"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                )}
+                {/* <div className="input-group mb-3">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text" id="basic-addon1">
+                      <i className="fa-solid fa-key main-color"></i>
+                    </span>
+                  </div>
+                  <input
+                    id="lastName"
+                    type="password"
+                    className="form-control"
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div> */}
+                {/* <div
+                  className="text-center"
+                  style={{
+                    marginTop: "-1rem",
+                  }}
+                >
+                  <a
+                    style={{
+                      fontSize: "10px",
+                    }}
+                    data-bs-toggle="modal"
+                    data-bs-target="#forgotpassword"
+                    href="#"
+                  >
+                    {/* <i className="fa-brands fa-google main-color"></i>{" "} */}
+                {/* forgotPassword? */}
+                {/* </a> */}
+                {/* </div> */}
+                {/* <div className=" mb-3 text-center">
+                  <p>or </p>
+                  <a className="btn border">
+                    <i className="fa-brands fa-google main-color"></i>{" "}
+                    &nbsp;Gmail
+                  </a>
+                </div> */}
+
+                {/* <div className="mb-3">
+                  <label id="success" className="form-label noti-success">
+                    <i className="fa-solid fa-face-grin-stars"></i> Request Sent
+                    Successfully
+                  </label>
+                </div>
+
+                <div className="mb-3">
+                  <label id="error" className="form-label noti-error">
+                    <i className="fa-solid fa-face-dizzy"></i> Error occured
+                  </label>
+                </div> */}
+                {console.log(sendOtp)}
+                {!verifyOtp ? (
+                  sendOtp ? (
+                    ""
+                  ) : (
+                    <div
+                      // type="submit"
+                      className="btn main-btn "
+                      // data-mdb-dismiss={!sendOtp ?"modal" : ""}
+                      onClick={() => onSendOtp()}
+                      // to="/studentDashboard"
+                    >
+                      {loading ? "Please Wait.." : "Send Otp"}
+                    </div>
+                  )
+                ) : (
+                  ""
+                )}
+                {sendOtp ? (
+                  <div className="d-flex justify-content-center align-items-center">
+                    <input
+                      className=" mx-1"
+                      style={{
+                        height: "45px",
+                        width: "45px",
+                        textAlign: "center",
+                        font: "normal 30px/18px Metropolis",
+                        letterSpacing: "0px",
+                        color: "#0c87ca",
+                        border: " 2px solid #0c87ca",
+                        borderRadius: "8px",
+                        opacity: "1",
+                        marginBottom: "31px",
+                      }}
+                      x
+                      type="text"
+                      id="mail"
+                      name="num"
+                      maxlength="1"
+                      onChange={(event) => {
+                        setOtp({
+                          ...otp,
+                          otp1: event.target.value,
+                        });
+                      }}
+                    />
+                    <input
+                      className="mx-1"
+                      style={{
+                        height: "45px",
+                        width: "45px",
+                        textAlign: "center",
+                        font: "normal 30px/18px Metropolis",
+                        letterSpacing: "0px",
+                        color: "#0c87ca",
+                        border: " 2px solid #0c87ca",
+                        borderRadius: "8px",
+                        opacity: "1",
+                        marginBottom: "31px",
+                      }}
+                      type="text"
+                      id="mail"
+                      name="num"
+                      maxlength="1"
+                      onChange={(event) => {
+                        setOtp({
+                          ...otp,
+                          otp2: event.target.value,
+                        });
+                      }}
+                    />
+                    <input
+                      className="mx-1"
+                      style={{
+                        height: "45px",
+                        width: "45px",
+                        textAlign: "center",
+                        font: "normal 30px/18px Metropolis",
+                        letterSpacing: "0px",
+                        color: "#0c87ca",
+                        border: " 2px solid #0c87ca",
+                        borderRadius: "8px",
+                        opacity: "1",
+                        marginBottom: "31px",
+                      }}
+                      type="text"
+                      id="mail"
+                      name="num"
+                      maxlength="1"
+                      onChange={(event) => {
+                        setOtp({
+                          ...otp,
+                          otp3: event.target.value,
+                        });
+                      }}
+                    />
+                    <input
+                      className="mx-1"
+                      style={{
+                        height: "45px",
+                        width: "45px",
+                        textAlign: "center",
+                        font: "normal 30px/18px Metropolis",
+                        letterSpacing: "0px",
+                        color: "#0c87ca",
+                        border: " 2px solid #0c87ca",
+                        borderRadius: "8px",
+                        opacity: "1",
+                        marginBottom: "31px",
+                      }}
+                      type="text"
+                      id="mail"
+                      name="num"
+                      maxlength="1"
+                      onChange={(event) => {
+                        setOtp({
+                          ...otp,
+                          otp4: event.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
+                {sendOtp ? (
+                  <div
+                    // type="submit"
+                    className="btn main-btn "
+                    // data-mdb-dismiss={!sendOtp ?"modal" : ""}
+                    onClick={() => onVerify()}
+                    // to="/studentDashboard"
+                  >
+                    {loading ? "Please Wait.." : "Verify Otp"}
+                  </div>
+                ) : (
+                  ""
+                )}
+                {verifyOtp ? (
+                  <div>
+                    <div className="input-group mb-3">
+                      <div className="input-group-prepend">
+                        <span className="input-group-text" id="basic-addon1">
+                          <i className="fa-solid fa-key main-color"></i>
+                        </span>
+                      </div>
+                      <input
+                        id="lastName"
+                        type="password"
+                        className="form-control"
+                        placeholder="Password"
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="input-group mb-3">
+                      <div className="input-group-prepend">
+                        <span className="input-group-text" id="basic-addon1">
+                          <i className="fa-solid fa-key main-color"></i>
+                        </span>
+                      </div>
+                      <input
+                        id="lastName"
+                        type="password"
+                        className="form-control"
+                        placeholder="Confirm Password"
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+                {verifyOtp ? (
+                  <div
+                    // type="submit"
+                    className="btn main-btn "
+                    // data-mdb-dismiss={!sendOtp ?"modal" : ""}
+                    onClick={() => onPasswordChange()}
+                    // to="/studentDashboard"
+                  >
+                    {loading ? "Please Wait.." : "Change Password"}
+                  </div>
+                ) : (
+                  ""
+                )}
               </form>
             </div>
           </div>
